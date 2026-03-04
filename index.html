@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Broken Math of Modern AI</title>
+<meta name="description" content="A deep technical series exposing the mathematical flaws hiding inside every modern LLM — from Euler integration to spectral instability.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+:root {
+  --void:   #080a0f;
+  --deep:   #0d1117;
+  --panel:  #131820;
+  --border: #1e2730;
+  --border2:#252f3a;
+  --text:   #dce4ee;
+  --muted:  #6b7f94;
+  --dim:    #3d4f61;
+  --accent: #f97316;
+  --a-dim:  rgba(249,115,22,0.12);
+  --a-glow: rgba(249,115,22,0.25);
+  --green:  #22c55e;
+  --red:    #ef4444;
+  --yellow: #eab308;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--text);overflow-x:hidden;font-family:'Lora',Georgia,serif;font-size:18px;line-height:1.85;}
+
+/* PROGRESS */
+#progress-bar{position:fixed;top:0;left:0;height:2px;width:0%;background:var(--accent);z-index:999;box-shadow:0 0 12px var(--a-glow);transition:width .1s linear;}
+
+/* NAV */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 6vw;display:flex;justify-content:space-between;align-items:center;background:rgba(8,10,15,0.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);transform:translateY(-100%);transition:transform .4s ease;}
+#navbar.show{transform:translateY(0);}
+.nav-series{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);text-decoration:none;}
+.nav-chapter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;}
+.nav-home{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.15em;text-transform:uppercase;transition:color .2s;}
+.nav-home:hover{color:var(--accent);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.visible{opacity:1;transform:none;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:20px;margin:70px 0;}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-mark{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);}
+
+/* MATH */
+.math-block{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);padding:24px 28px;margin:28px 0;border-radius:0 6px 6px 0;overflow-x:auto;}
+.math-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+
+/* CALLOUT */
+.callout{background:var(--panel);border:1px solid var(--border2);padding:28px 32px;margin:32px 0;border-radius:4px;position:relative;}
+.callout::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
+.callout-icon{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.callout p{color:rgba(220,228,238,.75);font-style:italic;margin-bottom:0;}
+
+/* PULL QUOTE */
+.pull-quote{font-family:'Syne',sans-serif;font-size:clamp(1.1rem,2.2vw,1.45rem);font-weight:700;color:var(--text);border-left:3px solid var(--accent);padding:20px 28px;margin:44px 0;line-height:1.4;background:var(--a-dim);}
+
+/* ANALOGY */
+.analogy{border:1px dashed var(--border2);padding:26px 30px;margin:30px 0;border-radius:4px;position:relative;}
+.analogy-label{position:absolute;top:-10px;left:16px;background:var(--void);padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;}
+.analogy p{color:rgba(220,228,238,.65);font-style:italic;margin-bottom:0;font-size:.97rem;}
+
+/* SECTION TAG */
+.section-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-tag::after{content:'';flex:1;height:1px;background:var(--border);max-width:60px;}
+
+/* H2 H3 */
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;line-height:1.2;color:var(--text);margin-bottom:24px;letter-spacing:-.01em;}
+h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:600;color:var(--accent);margin:44px 0 16px;letter-spacing:.02em;}
+p{margin-bottom:20px;color:rgba(220,228,238,.85);}
+strong{color:var(--text);font-weight:600;}
+em{font-style:italic;color:rgba(220,228,238,.7);}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:rgba(249,115,22,.1);color:var(--accent);padding:2px 7px;border-radius:3px;}
+
+/* SHARE BAR */
+.share-bar{display:flex;align-items:center;gap:12px;margin:48px 0 0;padding-top:32px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.share-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-right:4px;}
+.share-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:500;text-decoration:none;border:1px solid var(--border2);color:var(--muted);background:var(--panel);cursor:pointer;transition:all .2s;letter-spacing:.05em;}
+.share-btn:hover{border-color:var(--accent);color:var(--accent);}
+.share-btn svg{width:14px;height:14px;fill:currentColor;flex-shrink:0;}
+#copy-msg{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--green);opacity:0;transition:opacity .3s;margin-left:4px;}
+
+/* CHAPTER NAV */
+.chapter-nav{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:64px;background:var(--border);}
+.cnav-cell{background:var(--deep);padding:24px 28px;text-decoration:none;transition:background .2s;}
+.cnav-cell:hover{background:var(--panel);}
+.cnav-dir{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.cnav-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--text);line-height:1.3;}
+.cnav-cell.next{text-align:right;}
+.cnav-cell.prev .cnav-title::before{content:'← ';}
+.cnav-cell.next .cnav-title::after{content:' →';}
+.cnav-cell.disabled{opacity:.3;pointer-events:none;}
+
+/* FOOTER */
+footer.site-footer{background:var(--deep);border-top:1px solid var(--border);padding:32px 6vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-brand{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);}
+.footer-home{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;}
+.footer-home:hover{color:var(--accent);}
+
+/* CONTENT WRAPPER */
+.content{max-width:760px;margin:0 auto;padding:80px 32px 100px;}
+.section{margin-bottom:80px;}
+
+@media(max-width:640px){
+  .chapter-nav{grid-template-columns:1fr;}
+  .content{padding:60px 20px 80px;}
+  #navbar{padding:12px 5vw;}
+}
+
+</style>
+<style>
+/* ── HOME-ONLY STYLES ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 6vw;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(249,115,22,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(249,115,22,.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: grid-drift 24s linear infinite;
+  pointer-events: none;
+}
+@keyframes grid-drift { to { transform: translateY(64px); } }
+
+.hero-inner { position: relative; z-index: 1; max-width: 860px; }
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fade-up .7s .15s forwards;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 800;
+  line-height: .98;
+  letter-spacing: -.03em;
+  color: var(--text);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fade-up .7s .3s forwards;
+}
+.hero h1 span { color: var(--accent); }
+.hero-desc {
+  font-family: 'Lora', serif;
+  font-size: 1.08rem;
+  color: rgba(220,228,238,.6);
+  max-width: 560px;
+  font-style: italic;
+  line-height: 1.75;
+  border-left: 2px solid var(--accent);
+  padding-left: 20px;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fade-up .7s .48s forwards;
+}
+.hero-stats {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fade-up .7s .62s forwards;
+}
+.stat-item { text-align: left; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 6vw;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fade-up .7s 1.1s forwards;
+}
+.scroll-line { width: 40px; height: 1px; background: var(--dim); }
+.scroll-text { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .25em; color: var(--dim); text-transform: uppercase; }
+
+/* ── SERIES SECTION ── */
+.series-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 100px 6vw;
+}
+.series-header {
+  margin-bottom: 56px;
+}
+.series-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.series-header p {
+  color: var(--muted);
+  font-size: .97rem;
+  font-style: italic;
+  max-width: 560px;
+}
+
+/* ── CHAPTER CARDS ── */
+.chapters-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.chapter-card {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 28px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  text-decoration: none;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  overflow: hidden;
+}
+.chapter-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform .25s ease;
+}
+.chapter-card:hover { background: #161d26; border-color: var(--border2); }
+.chapter-card:hover::before { transform: scaleY(1); }
+
+.chapter-card.coming-soon {
+  opacity: .45;
+  cursor: default;
+  pointer-events: none;
+}
+.chapter-card.coming-soon::before { display: none; }
+
+.card-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--border2);
+  line-height: 1;
+  letter-spacing: -.04em;
+  transition: color .2s;
+}
+.chapter-card:hover .card-num { color: var(--accent); }
+
+.card-body {}
+.card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 7px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 7px;
+  line-height: 1.25;
+}
+.card-desc {
+  font-family: 'Lora', serif;
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.card-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.status-live { color: var(--green); border: 1px solid rgba(34,197,94,.25); background: rgba(34,197,94,.07); }
+.status-soon { color: var(--dim); border: 1px solid var(--border); }
+
+/* ── ABOUT STRIP ── */
+.about-strip {
+  background: var(--deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 64px 6vw;
+}
+.about-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+.about-inner .section-tag { justify-content: center; }
+.about-inner .section-tag::after { display: none; }
+.about-inner h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--text);
+  margin: 16px 0 18px;
+}
+.about-inner p {
+  color: rgba(220,228,238,.6);
+  font-style: italic;
+  font-size: .97rem;
+  line-height: 1.8;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media(max-width:700px) {
+  .chapter-card { grid-template-columns: 48px 1fr; gap: 18px; padding: 20px; }
+  .card-status { display: none; }
+  .card-num { font-size: 1.8rem; }
+  .hero-stats { gap: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="navbar">
+  <a class="nav-series" href="index.html">The Broken Math of Modern AI</a>
+  <span class="nav-chapter">Series Home</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">A Technical Blog Series</div>
+    <h1>The <span>Broken</span><br>Math of<br>Modern AI</h1>
+    <p class="hero-desc">Everyone obsesses over parameters and benchmarks. Nobody reads the equation. This series is about the equation — and why it is structurally, mathematically broken.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Chapters</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Published</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Wrong assumptions</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Read the series</span>
+  </div>
+</header>
+
+<!-- CHAPTER LIST -->
+<section class="series-section">
+  <div class="series-header reveal">
+    <div class="section-tag">The Series</div>
+    <h2>Seven Chapters.<br>One Uncomfortable Argument.</h2>
+    <p>We take every major LLM architecture decision and run it through rigorous mathematics. The results are not flattering.</p>
+  </div>
+
+  <div class="chapters-grid">
+
+    <a class="chapter-card reveal" href="chapter1.html">
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-tag">Dynamical Systems · Numerical Methods</div>
+        <div class="card-title">The Curse of Euler Integration</div>
+        <div class="card-desc">Why the world's most advanced AI runs on the crudest numerical integrator known to man — and why that explains every drift, hallucination, and overcommitment you've ever seen.</div>
+      </div>
+      <div class="card-status status-live">Live</div>
+    </a>
+
+    <a class="chapter-card reveal" href="chapter2.html">
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-tag">Contraction · Lyapunov · Spectral Stability</div>
+        <div class="card-title">The Unconstrained Machine</div>
+        <div class="card-desc">Even with a perfect integrator, the Transformer violates every mathematical condition required for stable memory — no contraction, no Lyapunov function, no spectral constraint. Five conditions. Zero satisfied.</div>
+      </div>
+      <div class="card-status status-live">Live</div>
+    </a>
+
+    <div class="chapter-card coming-soon reveal">
+      <div class="card-num">03</div>
+      <div class="card-body">
+        <div class="card-tag">Attention Mechanism · Reasoning</div>
+        <div class="card-title">Attention Is Not Reasoning</div>
+        <div class="card-desc">Softmax attention is a weighted average over value vectors. We prove why this operation is structurally incapable of logical inference — and what that means for every "reasoning" benchmark.</div>
+      </div>
+      <div class="card-status status-soon">Coming Soon</div>
+    </div>
+
+    <div class="chapter-card coming-soon reveal">
+      <div class="card-num">04</div>
+      <div class="card-body">
+        <div class="card-tag">Energy · Thermodynamics · Depth</div>
+        <div class="card-title">The Energy Explosion</div>
+        <div class="card-desc">A Transformer of depth L has energy that grows linearly with L — with no structural ceiling. We derive the exact bound and show why very deep networks are thermodynamically incoherent.</div>
+      </div>
+      <div class="card-status status-soon">Coming Soon</div>
+    </div>
+
+    <div class="chapter-card coming-soon reveal">
+      <div class="card-num">05</div>
+      <div class="card-body">
+        <div class="card-tag">Autoregression · Error Propagation</div>
+        <div class="card-title">Autoregressive Instability</div>
+        <div class="card-desc">When a model generates its own input, every structural flaw compounds. We analyze the error propagation dynamics of autoregressive decoding and show why long outputs degrade mathematically — not just empirically.</div>
+      </div>
+      <div class="card-status status-soon">Coming Soon</div>
+    </div>
+
+    <div class="chapter-card coming-soon reveal">
+      <div class="card-num">06</div>
+      <div class="card-body">
+        <div class="card-tag">Scaling Laws · Parameter Efficiency</div>
+        <div class="card-title">Why Scaling Fails</div>
+        <div class="card-desc">More parameters do not fix a broken integrator. More data do not add a missing Lyapunov function. We show why the structural flaws in this series are scale-invariant — and what scaling actually does and doesn't fix.</div>
+      </div>
+      <div class="card-status status-soon">Coming Soon</div>
+    </div>
+
+    <div class="chapter-card coming-soon reveal">
+      <div class="card-num">07</div>
+      <div class="card-body">
+        <div class="card-tag">Synthesis · The Path Forward</div>
+        <div class="card-title">The Uncomfortable Conclusion</div>
+        <div class="card-desc">Everything we've shown points to one thing: the Transformer architecture is not a foundation we should keep building on. We look at what a mathematically honest alternative looks like — and why it matters now.</div>
+      </div>
+      <div class="card-status status-soon">Coming Soon</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="about-strip">
+  <div class="about-inner reveal">
+    <div class="section-tag">About This Series</div>
+    <h2>Why This Needs to Be Said</h2>
+    <p>The AI industry is moving at extraordinary speed, mostly in one direction — scale. More parameters. More data. More compute. Almost no one is asking whether the mathematical foundation is sound. This series is that question, asked rigorously, with equations, with proofs, and without apology.</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span class="footer-brand">The Broken Math of Modern AI</span>
+  <span class="footer-copy">A technical blog series</span>
+</footer>
+
+<script>
+// PROGRESS + NAV
+const _bar = document.getElementById('progress-bar');
+const _nav = document.getElementById('navbar');
+if (_bar && _nav) {
+  window.addEventListener('scroll', () => {
+    const t = document.body.scrollHeight - window.innerHeight;
+    _bar.style.width = (window.scrollY / t * 100) + '%';
+    _nav.classList.toggle('show', window.scrollY > 180);
+  });
+}
+
+// SCROLL REVEAL
+const _obs = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal').forEach(el => _obs.observe(el));
+
+// SHARE
+function initShare(title) {
+  const url  = window.location.href;
+  const enc  = encodeURIComponent(url);
+  const txt  = encodeURIComponent(title + ' — The Broken Math of Modern AI');
+  const tw   = document.getElementById('share-twitter');
+  const li   = document.getElementById('share-linkedin');
+  const cp   = document.getElementById('share-copy');
+  const msg  = document.getElementById('copy-msg');
+  if (tw) tw.href = `https://twitter.com/intent/tweet?text=${txt}&url=${enc}`;
+  if (li) li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`;
+  if (cp) cp.addEventListener('click', () => {
+    navigator.clipboard.writeText(url).then(() => {
+      if (msg) { msg.style.opacity = 1; setTimeout(() => msg.style.opacity = 0, 2200); }
+    });
+  });
+}
+
+</script>
+<script>
+  // no progress needed on home, just nav + reveal
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('show', window.scrollY > 60);
+  });
+</script>
+</body>
+</html>
