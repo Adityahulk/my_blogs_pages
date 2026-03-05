@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ch.02: The Unconstrained Machine | The Broken Math of Modern AI</title>
+  <title>Ch.02 · The Unconstrained Machine | The Broken Math of Modern AI</title>
   <meta name="description"
-    content="Transformers violate every mathematical condition required for stable memory: no contraction, no Lyapunov function, no spectral constraint. Five conditions. Zero satisfied.">
+    content="Five conditions for stable memory. Zero satisfied by the Transformer. No contraction, no Lyapunov function, no spectral constraint. This is not a bug. It is a theorem.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&display=swap');
-
     :root {
       --void: #080a0f;
       --deep: #0d1117;
@@ -46,7 +49,6 @@
       line-height: 1.85;
     }
 
-    /* PROGRESS */
     #progress-bar {
       position: fixed;
       top: 0;
@@ -59,7 +61,6 @@
       transition: width .1s linear;
     }
 
-    /* NAV */
     #navbar {
       position: fixed;
       top: 0;
@@ -97,21 +98,6 @@
       letter-spacing: .1em;
     }
 
-    .nav-home {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      transition: color .2s;
-    }
-
-    .nav-home:hover {
-      color: var(--accent);
-    }
-
-    /* REVEAL */
     .reveal {
       opacity: 0;
       transform: translateY(26px);
@@ -123,7 +109,6 @@
       transform: none;
     }
 
-    /* DIVIDER */
     .divider {
       display: flex;
       align-items: center;
@@ -143,7 +128,6 @@
       color: var(--dim);
     }
 
-    /* MATH */
     .math-block {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -151,6 +135,16 @@
       padding: 24px 28px;
       margin: 28px 0;
       border-radius: 0 6px 6px 0;
+      overflow-x: auto;
+    }
+
+    .math-block-inner {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 2px solid rgba(249, 115, 22, .4);
+      padding: 14px 18px;
+      margin: 14px 0 0;
+      border-radius: 0 4px 4px 0;
       overflow-x: auto;
     }
 
@@ -163,7 +157,6 @@
       margin-bottom: 12px;
     }
 
-    /* CALLOUT */
     .callout {
       background: var(--panel);
       border: 1px solid var(--border2);
@@ -198,7 +191,10 @@
       margin-bottom: 0;
     }
 
-    /* PULL QUOTE */
+    .callout p+p {
+      margin-top: 14px;
+    }
+
     .pull-quote {
       font-family: 'Syne', sans-serif;
       font-size: clamp(1.1rem, 2.2vw, 1.45rem);
@@ -211,7 +207,6 @@
       background: var(--a-dim);
     }
 
-    /* ANALOGY */
     .analogy {
       border: 1px dashed var(--border2);
       padding: 26px 30px;
@@ -240,7 +235,6 @@
       font-size: .97rem;
     }
 
-    /* SECTION TAG */
     .section-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
@@ -261,7 +255,6 @@
       max-width: 60px;
     }
 
-    /* H2 H3 */
     h2 {
       font-family: 'Syne', sans-serif;
       font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -274,7 +267,7 @@
 
     h3 {
       font-family: 'Syne', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--accent);
       margin: 44px 0 16px;
@@ -305,7 +298,46 @@
       border-radius: 3px;
     }
 
-    /* SHARE BAR */
+    ul {
+      margin: 0 0 20px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    ul li {
+      color: rgba(220, 228, 238, .85);
+      padding: 6px 0;
+      font-size: .97rem;
+      line-height: 1.7;
+      list-style: disc;
+      margin-left: 22px;
+    }
+
+    .aside {
+      background: rgba(249, 115, 22, .06);
+      border: 1px solid rgba(249, 115, 22, .2);
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .aside-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .aside p {
+      color: rgba(220, 228, 238, .6);
+      font-style: italic;
+      font-size: .92rem;
+      margin-bottom: 0;
+      line-height: 1.7;
+    }
+
     .share-bar {
       display: flex;
       align-items: center;
@@ -364,7 +396,6 @@
       margin-left: 4px;
     }
 
-    /* CHAPTER NAV */
     .chapter-nav {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -378,6 +409,7 @@
       padding: 24px 28px;
       text-decoration: none;
       transition: background .2s;
+      display: block;
     }
 
     .cnav-cell:hover {
@@ -418,237 +450,6 @@
       pointer-events: none;
     }
 
-    /* FOOTER */
-    footer.site-footer {
-      background: var(--deep);
-      border-top: 1px solid var(--border);
-      padding: 32px 6vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .footer-brand {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    .footer-copy {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--dim);
-    }
-
-    .footer-home {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .footer-home:hover {
-      color: var(--accent);
-    }
-
-    /* CONTENT WRAPPER */
-    .content {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 80px 32px 100px;
-    }
-
-    .section {
-      margin-bottom: 80px;
-    }
-
-    @media(max-width:640px) {
-      .chapter-nav {
-        grid-template-columns: 1fr;
-      }
-
-      .content {
-        padding: 60px 20px 80px;
-      }
-
-      #navbar {
-        padding: 12px 5vw;
-      }
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
-  <style>
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 6vw;
-      position: relative;
-      overflow: hidden;
-      background: var(--void);
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255, 255, 255, .025) 60px),
-        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255, 255, 255, .025) 60px);
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-    }
-
-    .eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
-      opacity: 0;
-      animation: fade-up .7s .2s forwards;
-    }
-
-    .eyebrow-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid rgba(249, 115, 22, .3);
-      padding: 4px 12px;
-      border-radius: 2px;
-    }
-
-    .eyebrow-series {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: .2em;
-      text-transform: uppercase;
-    }
-
-    .hero h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.6rem, 7vw, 6rem);
-      font-weight: 800;
-      line-height: 1.0;
-      letter-spacing: -.025em;
-      color: var(--text);
-      margin-bottom: 12px;
-      opacity: 0;
-      animation: fade-up .7s .35s forwards;
-    }
-
-    .hero h1 em {
-      font-style: italic;
-      color: var(--accent);
-      font-weight: 300;
-    }
-
-    .hero-sub {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(1rem, 2vw, 1.3rem);
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 28px;
-      opacity: 0;
-      animation: fade-up .7s .5s forwards;
-    }
-
-    .hero-thesis {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .8rem;
-      color: rgba(249, 115, 22, .7);
-      max-width: 640px;
-      line-height: 1.7;
-      border-left: 2px solid var(--accent);
-      padding-left: 20px;
-      opacity: 0;
-      animation: fade-up .7s .65s forwards;
-    }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 40px;
-      left: 6vw;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      opacity: 0;
-      animation: fade-up .7s 1.1s forwards;
-    }
-
-    .scroll-line {
-      width: 40px;
-      height: 1px;
-      background: var(--dim);
-    }
-
-    .scroll-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .25em;
-      color: var(--dim);
-      text-transform: uppercase;
-    }
-
-    /* ── CHAPTER FLOW ── */
-    .chapter-flow {
-      display: flex;
-      gap: 3px;
-      flex-wrap: wrap;
-      margin: 32px 0;
-    }
-
-    .flow-step {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 12px 18px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .75rem;
-      color: var(--muted);
-      flex: 1;
-      min-width: 130px;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .flow-step strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .flow-step.active {
-      background: var(--a-dim);
-      color: var(--accent);
-      border-color: rgba(249, 115, 22, .4);
-    }
-
-    .flow-step.active strong {
-      color: var(--accent);
-    }
-
-    .flow-arrow {
-      display: flex;
-      align-items: center;
-      color: var(--dim);
-      font-size: 1.2rem;
-      padding-top: 2px;
-    }
-
-    /* ── COMPARE GRID ── */
     .compare-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -682,7 +483,6 @@
       color: rgba(220, 228, 238, .7);
     }
 
-    /* ── TABLE ── */
     .stab-table {
       width: 100%;
       border-collapse: collapse;
@@ -745,7 +545,137 @@
       font-size: .8rem;
     }
 
-    /* ── CONCLUSION ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 6vw;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255, 255, 255, .022) 60px), repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255, 255, 255, .022) 60px);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fade-up .7s .2s forwards;
+    }
+
+    .eyebrow-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(249, 115, 22, .3);
+      padding: 4px 12px;
+      border-radius: 2px;
+    }
+
+    .eyebrow-series {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 6.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: fade-up .7s .35s forwards;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .hero-sub {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1rem, 2.2vw, 1.4rem);
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: .02em;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fade-up .7s .5s forwards;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: rgba(220, 228, 238, .6);
+      max-width: 580px;
+      font-style: italic;
+      line-height: 1.7;
+      border-left: 2px solid var(--accent);
+      padding-left: 20px;
+      opacity: 0;
+      animation: fade-up .7s .65s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 6vw;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fade-up .7s 1.1s forwards;
+    }
+
+    .scroll-line {
+      width: 40px;
+      height: 1px;
+      background: var(--dim);
+      animation: pulse-line 2s infinite;
+    }
+
+    @keyframes pulse-line {
+
+      0%,
+      100% {
+        width: 40px
+      }
+
+      50% {
+        width: 60px
+      }
+    }
+
+    .scroll-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .25em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
     .conclusion {
       background: var(--deep);
       border-top: 1px solid var(--border);
@@ -772,18 +702,16 @@
       overflow: hidden;
       text-decoration: none;
       display: block;
-      transition: border-color .2s;
-    }
-
-    .next-chapter:hover {
-      border-color: var(--accent);
+      opacity: .55;
+      cursor: default;
+      pointer-events: none;
     }
 
     .next-chapter::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(249, 115, 22, .06), transparent 60%);
+      background: linear-gradient(135deg, rgba(249, 115, 22, .04), transparent 60%);
       pointer-events: none;
     }
 
@@ -811,6 +739,55 @@
       margin: 0;
     }
 
+    footer.site-footer {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      padding: 32px 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--dim);
+    }
+
+    .footer-home {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .footer-home:hover {
+      color: var(--accent);
+    }
+
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 32px 100px;
+    }
+
+    .section {
+      margin-bottom: 80px;
+    }
+
     @keyframes fade-up {
       from {
         opacity: 0;
@@ -828,12 +805,20 @@
         grid-template-columns: 1fr;
       }
 
-      .chapter-flow {
-        flex-direction: column;
+      .chapter-nav {
+        grid-template-columns: 1fr;
       }
 
-      .flow-arrow {
-        display: none;
+      .content {
+        padding: 60px 20px 80px;
+      }
+
+      #navbar {
+        padding: 12px 5vw;
+      }
+
+      .hero {
+        padding: 0 5vw;
       }
     }
   </style>
@@ -842,13 +827,11 @@
 <body>
 
   <div id="progress-bar"></div>
-
   <nav id="navbar">
     <a class="nav-series" href="index.html">The Broken Math of Modern AI</a>
-    <span class="nav-chapter">Ch.02: The Unconstrained Machine</span>
+    <span class="nav-chapter">Ch.02 · The Unconstrained Machine</span>
   </nav>
 
-  <!-- HERO -->
   <header class="hero">
     <div class="hero-inner">
       <div class="eyebrow">
@@ -857,46 +840,51 @@
       </div>
       <h1>The <em>Unconstrained</em><br>Machine</h1>
       <div class="hero-sub">Five conditions for stable memory. Zero satisfied by design.</div>
-      <div class="hero-thesis">
-        "Transformers are not merely poorly integrated dynamical systems; they are structurally unconstrained ones that
-        violate the core mathematical conditions required for stable memory evolution."
-      </div>
+      <p class="hero-desc">Chapter 1 showed the method is broken. Now we show the structure underneath is broken too.
+        Even with a perfect integrator, the Transformer would still violate every mathematical condition that real
+        memory systems must satisfy. This isn't a complaint. It's a proof.</p>
     </div>
     <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span class="scroll-text">Scroll to begin</span>
+      <div class="scroll-line"></div><span class="scroll-text">Scroll to begin</span>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <main class="content">
 
+    <!-- § RECAP -->
     <section class="section reveal">
-      <div class="section-tag">Prologue</div>
-      <h2>From Bad Method to Bad Structure</h2>
-      <p>In Chapter 1, we showed that the Transformer's layer-by-layer update is formally equivalent to Forward Euler
-        integration of a learned nonlinear dynamical system:</p>
+      <div class="section-tag">Recap and Setup</div>
+      <h2>Chapter 1 Only Got Us Halfway There</h2>
+
+      <p>In Chapter 1, we proved something uncomfortable. Strip away everything, and a single Transformer layer is just
+        Forward Euler integration with step size permanently fixed at \(h = 1\):</p>
+
       <div class="math-block">
-        <div class="math-label">Chapter 1 Result: Forward Euler Update</div>
+        <div class="math-label">Chapter 1 Result · The Update Rule</div>
         $$x_{k+1} = x_k + f_k(x_k)$$
       </div>
-      <p>The critique there was about the <em>method</em>: Forward Euler is a crude, unstable integrator that amplifies
-        errors, drifts from the true trajectory, and overcommits to early signals.</p>
-      <p>But Chapter 2 is about something deeper. Even if you replaced Euler with a perfect integrator, the system being
-        integrated is itself <strong>mathematically unconstrained</strong> in ways no real physical memory system ever
-        is.</p>
 
-      <div class="chapter-flow">
-        <div class="flow-step"><strong>Chapter 1</strong>Bad method<br>Euler integration</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step active"><strong>Chapter 2</strong>Bad structure<br>Unconstrained dynamics</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step"><strong>Chapter 3</strong>Bad energy<br>No dissipation</div>
+      <p>We showed why this is a curse. No adaptive step size. No damping. The full force of everything the attention
+        mechanism and the FFN learned gets injected into the hidden state at every layer. That's why early ambiguity
+        amplifies. That's why "Mercury" becomes a planet by layer 80 whether you wanted it to or not.</p>
+
+      <p>But here's what I didn't tell you in Chapter 1.</p>
+
+      <p>That was about the <em>method</em> being broken. Euler is bad. Fine. But there's a deeper problem. Even if you
+        swapped Euler for a perfect integrator, you would still have a catastrophically broken system. Because the thing
+        being integrated has no business being a memory system at all.</p>
+
+      <p>The dynamical system itself violates every mathematical condition that any stable memory system must satisfy.
+        Not some of them. Not most of them. Every single one.</p>
+
+      <p>That's what this chapter is about.</p>
+
+      <div class="aside">
+        <span class="aside-icon">🧠</span>
+        <p>This is the chapter I find most interesting to write. Because once you see these five failures, you stop
+          being surprised by anything the Transformer does wrong. The failure modes aren't bugs. They're consequences.
+          Every single one is mathematically inevitable.</p>
       </div>
-
-      <p>This chapter asks a precise question: <em>what must be mathematically true of any system that evolves memory
-          stably?</em> Then we check, systematically, whether Transformers satisfy any of those conditions. The answer
-        is: they satisfy none, not by accident, but by construction.</p>
     </section>
 
     <div class="divider">
@@ -905,31 +893,33 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § FRAMING -->
     <section class="section reveal">
-      <div class="section-tag">Section I</div>
-      <h2>Transformer as a General Nonlinear Dynamical System</h2>
-      <p>The Transformer's residual stream defines a state variable \( x_k \in \mathbb{R}^d \) at each layer \( k \).
-        The full update rule is a <strong>state transition map</strong>:</p>
+      <div class="section-tag">Framing the Problem</div>
+      <h2>What Does a Stable Memory System Even Look Like?</h2>
+
+      <p>Before we can say the Transformer fails, we need to know what passing looks like. What are the actual
+        mathematical requirements of a system that evolves memory in a sound way?</p>
+
+      <p>Let's be precise. The Transformer's hidden state is a vector \(x_k \in \mathbb{R}^d\). Each layer applies a
+        transformation to it:</p>
+
       <div class="math-block">
-        <div class="math-label">General State Transition</div>
-        $$x_{k+1} = T_k(x_k), \quad \text{where} \quad T_k(x) = x + f_k(x)$$
+        <div class="math-label">Transformer · State Transition Map</div>
+        $$x_{k+1} = T_k(x_k), \qquad T_k(x) = x + f_k(x)$$
       </div>
-      <p>This is a well-defined nonlinear discrete-time dynamical system. It obviously is one. The question is whether
-        it is a <strong>well-behaved</strong> one.</p>
-      <p>What do we want from a memory system? The final hidden state \( x_L \) should faithfully represent relevant
-        semantic content, without being corrupted by noise, without amplifying early ambiguities, without spiraling
-        into runaway interpretations. Mathematically, this requires:</p>
-      <div class="callout">
-        <div class="callout-icon">The Five Requirements for Stable Memory</div>
-        <p>
-          1. Not amplify perturbations uncontrollably, <strong>contraction or non-expansion</strong><br><br>
-          2. Forget noise faster than signal, <strong>selective dissipation</strong><br><br>
-          3. Prevent runaway modes, <strong>spectral stability</strong><br><br>
-          4. Evolve within bounded energy, <strong>Lyapunov stability</strong><br><br>
-          5. Admit a well-defined energy function that decreases, <strong>Lyapunov function existence</strong>
-        </p>
-      </div>
-      <p>We examine each condition in turn, first rigorously, then applied to the Transformer update.</p>
+
+      <p>This is a nonlinear discrete-time dynamical system. The state \(x_k\) is the "memory" at layer \(k\). The
+        function \(T_k\) is the layer's transition map. And \(f_k\) is everything that happens inside the layer: the
+        attention mechanism, the LayerNorm, the FFN, all of it combined into one big learned nonlinear function.</p>
+
+      <p>Now ask the right question. What do we actually need from this system? We need the final hidden state \(x_L\)
+        to faithfully represent the semantic content of the input. Not an amplified version of the first thing the model
+        found interesting. Not a state that's been inflated by 96 layers of energy injection. A faithful, stable
+        representation.</p>
+
+      <p>For that, the system needs five things. Think of them as five locks that a real memory system must pass
+        through. The Transformer fails every one.</p>
     </section>
 
     <div class="divider">
@@ -938,53 +928,84 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § CONTRACTION -->
     <section class="section reveal">
-      <div class="section-tag">Section II</div>
-      <h2>Contraction Mappings and Semantic Stability</h2>
+      <div class="section-tag">Failure One</div>
+      <h2>Contraction Mappings: The System Has No Self-Correction</h2>
 
-      <h3>The Mathematical Definition</h3>
-      <p>A mapping \( T : \mathbb{R}^d \to \mathbb{R}^d \) is a <strong>contraction</strong> if there exists \( \alpha
-        \in [0,1) \) such that for all \( x, y \):</p>
+      <h3>What Contraction Means</h3>
+
+      <p>Imagine you have two slightly different interpretations of the same ambiguous sentence. Two hidden states,
+        \(x\) and \(y\), starting close together but not identical. In a well-behaved memory system, those two states
+        should get <em>closer</em> with each processing step, not further apart. Ambiguity should resolve, not compound.
+      </p>
+
+      <p>The mathematical name for this property is <strong>contraction</strong>. A mapping \(T\) is a contraction if
+        there exists some constant \(\alpha \in [0, 1)\) such that for every pair of states:</p>
+
       <div class="math-block">
-        <div class="math-label">Contraction Condition</div>
-        $$\|T(x) - T(y)\| \leq \alpha\,\|x - y\|, \quad \alpha < 1$$ </div>
-          <p>The <strong>Banach Fixed Point Theorem</strong> guarantees that any contraction has a unique fixed point,
-            and iterating from <em>any</em> initial condition converges there. This is the mathematical skeleton of
-            stable memory.</p>
+        <div class="math-label">Contraction Mapping Condition</div>
+        $$\|T(x) - T(y)\| \leq \alpha \|x - y\|, \qquad \alpha < 1$$ </div>
+
+          <p>The constant \(\alpha\) is called the Lipschitz constant. When it is strictly less than 1, every
+            application of the map squeezes the space a little. Two nearby states become even nearer. Apply the map
+            again and they are nearer still. Keep going and they converge to the same point.</p>
+
+          <p>The <strong>Banach Fixed Point Theorem</strong> tells us the consequence. Any strict contraction on a
+            complete metric space has exactly one fixed point, and starting from <em>anywhere</em>, repeated application
+            converges there. It doesn't matter if you start with a noisy input, a wrong initial bias, or a confused
+            early representation. The contraction wipes it out. You converge to the right answer regardless.</p>
+
+          <p>That is what disciplined memory looks like.</p>
 
           <div class="analogy">
-            <div class="analogy-label">Intuition: Two Interpretations of a Sentence</div>
-            <p>Imagine two hidden states \( x \) and \( y \): one correct interpretation of an ambiguous sentence, one
-              slightly wrong. In a contractive system, \(\|T(x)-T(y)\| < \|x-y\|\): the two interpretations get closer
-                with each layer. The system forgets the initial ambiguity. In a non-contractive system, the two
-                interpretations diverge, and the model commits increasingly to whichever path received the first
-                perturbation.</p>
+            <div class="analogy-label">Two Paths Into a Funnel</div>
+            <p>Picture a funnel. You drop two marbles in from different positions anywhere inside it. It doesn't matter
+              where they started. Gravity and the funnel's shape force them toward the same exit point. The funnel is a
+              contraction. The two marbles are your two interpretations. The exit is the correct answer. A stable memory
+              system is a funnel. The Transformer is not a funnel.</p>
           </div>
 
-          <h3>Why the Transformer Is Not a Contraction</h3>
-          <p>For the Transformer map \( T(x) = x + f(x) \), compute the difference between two outputs:</p>
+          <h3>Why the Transformer Cannot Possibly Be a Contraction</h3>
+
+          <p>Apply the Transformer map \(T(x) = x + f(x)\) to two states \(x\) and \(y\). Compute the difference between
+            their outputs:</p>
+
           <div class="math-block">
-            <div class="math-label">Transformer Output Difference</div>
-            $$T(x) - T(y) = \underbrace{(x - y)}_{\text{original gap}} + \underbrace{(f(x) - f(y))}_{\text{nonlinear
-            addition}}$$
+            <div class="math-label">Output Difference Under the Transformer Map</div>
+            $$T(x) - T(y) = \underbrace{(x - y)}_{\text{original gap}} + \underbrace{(f(x) - f(y))}_{\text{learned
+            correction}}$$
           </div>
-          <p>Even small nonlinear differences get <em>added</em>, not damped. Nothing enforces \( \|T(x)-T(y)\| <
-              \|x-y\| \). The Jacobian of the attention mechanism can have eigenvalues arbitrarily larger than 1.
-              Training may accidentally produce approximate contraction in some regimes, but the architecture imposes no
-              such guarantee.</p>
 
-              <div class="compare-grid">
-                <div class="cmp">
-                  <h4>Contractive System</h4>
-                  <p>Two nearby states \( x, y \) evolve toward each other. Noise is forgotten. Ambiguity resolves. The
-                    system has a unique attractor. Memory is stable.</p>
-                </div>
-                <div class="cmp dark">
-                  <h4>Transformer (Residual Map)</h4>
-                  <p>\( T(x) = x + f(x) \), the residual adds nonlinear differences rather than damping them. Small
-                    semantic ambiguity can grow across layers. No structural damping exists.</p>
-                </div>
-              </div>
+          <p>The residual connection carries the original gap through unchanged and <em>adds</em> whatever the learned
+            part contributes on top. For this to be a contraction, we would need the learned correction \((f(x) -
+            f(y))\) to be large, negative, and precisely anti-parallel to \((x - y)\). The attention mechanism and the
+            FFN would need to automatically detect the gap between any two possible states and work to close it.</p>
+
+          <p>Nothing in the architecture does that. Nothing in the loss function trains for it. The attention mechanism
+            is designed to find relevant context and pull it in. The FFN is designed to amplify semantic signals it
+            finds important. Neither of them cares about the gap between two hypothetical states. The architecture has
+            no concept of "close this gap." It only knows "add this information."</p>
+
+          <div class="compare-grid">
+            <div class="cmp">
+              <h4>A Contractive System</h4>
+              <p>Two nearby interpretations evolve toward each other. Initial noise and ambiguity get squeezed out
+                across steps. The system self-corrects. Wrong inputs get pulled back toward right ones.</p>
+            </div>
+            <div class="cmp dark">
+              <h4>The Transformer</h4>
+              <p>\(T(x) = x + f(x)\) adds differences rather than damping them. Two interpretations that start slightly
+                different can grow more different with every layer. Initial bias compounds. There is no self-correction
+                built in anywhere.</p>
+            </div>
+          </div>
+
+          <p>This is exactly why the first few tokens of a prompt are so disproportionately powerful. They set a
+            direction. That direction gets added to the residual stream at layer 1. No contraction pulls it back at
+            layer 2. So it's still there at layer 3, slightly amplified. Still there at layer 10. By layer 80, the early
+            context has been reinforced so many times it is effectively immovable. The Transformer has no mechanism to
+            correct early bias. It only has mechanisms to propagate it.</p>
     </section>
 
     <div class="divider">
@@ -993,51 +1014,93 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § LYAPUNOV -->
     <section class="section reveal">
-      <div class="section-tag">Section III</div>
-      <h2>Lyapunov Stability and the Absence of Bounded Energy</h2>
+      <div class="section-tag">Failure Two</div>
+      <h2>Lyapunov Stability: The System Has No Energy Budget</h2>
 
-      <h3>The Framework</h3>
-      <p>A function \( V : \mathbb{R}^d \to \mathbb{R}_{\geq 0} \) is a <strong>Lyapunov function</strong> for \(
-        x_{k+1} = T(x_k) \) if:</p>
+      <h3>The Most Powerful Idea in Dynamical Systems</h3>
+
+      <p>In 1892, a Russian mathematician named Aleksandr Lyapunov came up with an idea that changed everything. You
+        don't need to solve the equations of a system to prove it's stable. You just need to find a single scalar
+        function of the state, something like "energy" or "distance from equilibrium," and show it can only decrease
+        over time. If such a function exists, the system must be converging. It has no choice.</p>
+
+      <p>Formally, a <strong>Lyapunov function</strong> for a discrete system \(x_{k+1} = T(x_k)\) is a function \(V :
+        \mathbb{R}^d \to \mathbb{R}_{\geq 0}\) satisfying:</p>
+
       <div class="math-block">
-        <div class="math-label">Lyapunov Conditions</div>
-        $$V(x) > 0 \;\forall x \neq 0, \quad V(0) = 0, \quad V(T(x_k)) \leq V(x_k) \;\forall k$$
+        <div class="math-label">Lyapunov Function · Three Conditions</div>
+        $$V(x) > 0 \quad \text{for all } x \neq 0$$
+        $$V(0) = 0$$
+        $$V(T(x_k)) \leq V(x_k) \quad \text{for all } k$$
       </div>
-      <p>If such a function exists, the system is <strong>Lyapunov stable</strong>: the state's "energy" cannot
-        increase. If \( V(T(x_k)) < V(x_k) \) strictly, states converge to the fixed point, <strong>asymptotic
-          stability</strong>.</p>
+
+      <p>The third condition is everything. The "energy" \(V\) cannot increase from step to step. If it strictly
+        decreases everywhere except the equilibrium point, the system is <em>asymptotically stable</em>: it will
+        converge, no matter where it starts, no matter what you throw at it.</p>
 
       <div class="analogy">
-        <div class="analogy-label">Intuition: Marble in a Bowl</div>
-        <p>A marble placed anywhere in a bowl will roll toward the bottom. The bowl's shape defines a Lyapunov function,
-          potential energy. No matter where you place the marble, energy decreases monotonically. The bowl enforces
-          convergence through its geometry. Physical memory systems have this bowl-like structure in state space.</p>
+        <div class="analogy-label">The Marble in a Bowl, Again</div>
+        <p>The bowl is the Lyapunov function made physical. Potential energy is the function \(V\). Gravity ensures
+          \(V\) can only decrease. No matter where you place the marble inside the bowl, it rolls toward the bottom. It
+          cannot roll up the side and escape. The bowl's geometry enforces convergence completely, without you doing any
+          work. A stable memory system needs this bowl-like geometry in its state space. The Transformer's state space
+          is flat. There is no bowl. There is not even a rim.</p>
       </div>
 
-      <h3>Why the Transformer Has No Lyapunov Function</h3>
-      <p>Take \( V(x) = \|x\|^2 \) as the simplest candidate. Compute under the Transformer update:</p>
+      <h3>The Calculation That Breaks Everything</h3>
+
+      <p>Let's try to find a Lyapunov function for the Transformer. Start with the most natural candidate: the squared
+        norm of the hidden state, \(V(x) = \|x\|^2\). This would represent the total "energy" of the representation. For
+        the Transformer to be Lyapunov stable, this must be non-increasing.</p>
+
+      <p>Compute what happens to it after one Transformer layer:</p>
+
       <div class="math-block">
-        <div class="math-label">Norm Growth Under Transformer Update</div>
-        $$\|x_{k+1}\|^2 = \|x_k + f_k(x_k)\|^2 = \|x_k\|^2 + 2\langle x_k,\, f_k(x_k)\rangle +
-        \underbrace{\|f_k(x_k)\|^2}_{\geq\, 0\text{ always}}$$
+        <div class="math-label">Energy After One Transformer Update</div>
+        $$\|x_{k+1}\|^2 = \|x_k + f_k(x_k)\|^2$$
       </div>
-      <p>The last term is <strong>always non-negative</strong>. For norm to decrease we would need \( 2\langle x_k,
-        f_k(x_k)\rangle \) to be sufficiently negative, meaning the correction must point strongly <em>opposite</em> to
-        the current state. The attention mechanism is designed to <em>add relevant information</em>, which almost always
-        makes this inner product positive. The \( \|f_k\|^2 \) term acts like perpetual energy injection at every layer.
+
+      <p>Expand using \(\|a + b\|^2 = \|a\|^2 + 2\langle a, b \rangle + \|b\|^2\):</p>
+
+      <div class="math-block">
+        <div class="math-label">Expansion · The Three Terms</div>
+        $$\|x_{k+1}\|^2 = \underbrace{\|x_k\|^2}_{\text{current energy}} \;+\; \underbrace{2\langle x_k,\,
+        f_k(x_k)\rangle}_{\text{cross term}} \;+\; \underbrace{\|f_k(x_k)\|^2}_{\geq\, 0 \text{ always}}$$
+      </div>
+
+      <p>Stop at that last term. \(\|f_k(x_k)\|^2\) is a squared norm. It is <strong>always non-negative</strong>. Not
+        sometimes. Not in bad cases. Always. It doesn't matter what the weights are. It doesn't matter what the input
+        is. Every single layer, this term injects energy into the system unconditionally.</p>
+
+      <p>For the total energy to decrease, the cross term \(2\langle x_k, f_k(x_k)\rangle\) would have to be
+        sufficiently negative. That means \(f_k(x_k)\) would have to point <em>opposite</em> to \(x_k\), aggressively
+        fighting against the current state.</p>
+
+      <p>Think about what \(f_k(x_k)\) actually does. It gathers semantically related context and adds it. It amplifies
+        signals the model finds important. It is adding <em>relevant information that points in the same direction as
+          the current state</em>. That inner product is almost always positive. The attention mechanism is literally
+        designed to make it positive.</p>
+
+      <p>There is no Lyapunov function. Not because the analysis gets complicated. Because the architecture structurally
+        injects energy at every layer with nothing to remove it.</p>
+
+      <h3>What About Layer Normalization?</h3>
+
+      <p>This is the obvious objection. Layer Norm is in every Transformer. It rescales the hidden state to have unit
+        norm. Doesn't that fix the energy problem?</p>
+
+      <p>No. And the reason is important.</p>
+
+      <p>Layer Norm is a scalar operation. It changes the <em>length</em> of the vector. It says nothing about the
+        <em>direction</em>. Two hidden states that are geometrically drifting apart in opposite directions of the
+        \(d\)-dimensional semantic space are not brought closer together by rescaling either of them. You're just making
+        two diverging arrows shorter. They are still diverging.
       </p>
 
-      <div class="pull-quote">"No structural mechanism ensures energy decay. Even if training data prefers stability,
-        the equation does not enforce it."</div>
-
-      <h3>Layer Normalization: A Partial, Surface-Level Patch</h3>
-      <p>Layer Norm rescales \( x_k \) to unit norm within a sub-component. But it does not enforce that the
-        <em>semantic content</em> evolves contractively. It clips the magnitude but not the direction. Two hidden states
-        pointing in increasingly divergent directions are not made closer by normalization; they are merely scaled. The
-        Lyapunov violation is about <em>directional divergence</em> in high-dimensional state space, not scalar
-        magnitude.
-      </p>
+      <p>The Lyapunov violation is a disease of direction. Layer Norm is a patch for magnitude. They are not the same
+        problem, and one does not fix the other.</p>
     </section>
 
     <div class="divider">
@@ -1046,32 +1109,77 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § SPECTRAL -->
     <section class="section reveal">
-      <div class="section-tag">Section IV</div>
-      <h2>Spectral Instability and Runaway Modes</h2>
+      <div class="section-tag">Failure Three</div>
+      <h2>Spectral Instability: Some Directions Just Explode</h2>
 
-      <h3>Local Linearization</h3>
-      <p>Near any hidden state \( x_k \), linearize the Transformer update via its Jacobian \( J_{f_k} = \frac{\partial
-        f_k}{\partial x}\big|_{x_k} \):</p>
+      <h3>Reading the Eigenvalues</h3>
+
+      <p>The previous two failures were about the global picture. No contraction, no Lyapunov function. But spectral
+        analysis lets us go further and identify the <em>specific directions</em> in state space where things blow up.
+      </p>
+
+      <p>Near any particular hidden state \(x_k\), linearize the Transformer update using its Jacobian \(J_{f_k} =
+        \frac{\partial f_k}{\partial x}\big|_{x_k}\). The local behavior of the update looks like:</p>
+
       <div class="math-block">
-        <div class="math-label">Local Linearization → Eigenvalues of Transition Matrix</div>
-        $$x_{k+1} \approx (I + J_{f_k})\,x_k \implies \mu_i = 1 + \lambda_i(J_{f_k})$$
+        <div class="math-label">Local Linearization · Jacobian Analysis</div>
+        $$x_{k+1} \approx (I + J_{f_k})\, x_k$$
       </div>
-      <p>For discrete stability all eigenvalues must lie strictly inside the unit circle: \( |\mu_i| < 1 \). This
-          requires every eigenvalue of \( J_{f_k} \) to lie inside a disk of radius 1 centered at \( -1 \). Nothing in
-          the architecture, loss function, or training enforces this extraordinarily tight constraint.</p>
+
+      <p>The effective transition matrix is \((I + J_{f_k})\). Its eigenvalues are:</p>
+
+      <div class="math-block">
+        <div class="math-label">Eigenvalues of the Local Transition Matrix</div>
+        $$\mu_i = 1 + \lambda_i(J_{f_k})$$
+      </div>
+
+      <p>For a discrete system \(x_{k+1} = M x_k\) to be stable, all eigenvalues of \(M\) must lie strictly inside the
+        unit circle:</p>
+
+      <div class="math-block">
+        <div class="math-label">Discrete Stability · Unit Circle Criterion</div>
+        $$|\mu_i| < 1 \quad \text{for all } i$$ </div>
+
+          <p>For the Transformer, satisfying this would require every eigenvalue of \(J_{f_k}\) to fall inside a disk of
+            radius 1 centered at \(-1\) in the complex plane. Think about what that constraint means geometrically.
+            You're asking the Jacobian of the learned transformation to have a very specific and tightly restricted
+            spectrum. Not just "don't be too big." Centered at negative one.</p>
+
+          <p>Nothing enforces this. Not the architecture. Not the training loss. Predicting the next token accurately
+            has essentially nothing to do with having a spectrally constrained Jacobian. GPT-5 was not trained to
+            satisfy the unit circle criterion. It was trained to be good at language. Those are very different
+            objectives, and optimizing one tells you almost nothing about the other.</p>
+
+          <h3>What Happens When an Eigenvalue Escapes</h3>
+
+          <p>When \(|\mu_i| > 1\) for some eigendirection, the hidden state component along that direction gets
+            multiplied by \(|\mu_i|\) at every layer. After \(L\) layers, it has grown by \(|\mu_i|^L\). This is
+            exponential amplification. And the LLM has no mechanism to stop it.</p>
+
+          <p>This directly causes three things you've definitely seen in production:</p>
 
           <div class="callout">
-            <div class="callout-icon">Spectral Instability → Observable Failures</div>
-            <p>
-              <strong>Runaway interpretation:</strong> the model amplifies its first strong semantic commitment across
-              layers, unable to revise it.<br><br>
-              <strong>Narrative commitment:</strong> in long-context generation, early tokens get amplified so strongly
-              that later tokens cannot update the global interpretation.<br><br>
-              <strong>Hallucination persistence:</strong> once a hallucinated fact enters the residual stream with a
-              large eigenvector component, it propagates and grows, overriding contradictory evidence.
-            </p>
+            <div class="callout-icon">Three Direct Consequences of Spectral Instability</div>
+            <p><strong>Hallucination that can't be corrected mid-conversation.</strong> A hallucinated fact enters the
+              residual stream with a non-trivial component along an unstable eigendirection. By the time the model
+              finishes generating that sentence, the hallucinated fact has been amplified many times. Contradictory
+              information that arrives later has to fight exponential amplification to update the state. It loses. The
+              model doubles down.</p>
+            <p><strong>Disproportionate sensitivity to early context.</strong> The first tokens set eigendirections
+              early. Those directions get amplified at every layer. By layer 80, the initial semantic push has been
+              multiplied by \(|\mu_i|^{80}\). Later context can barely move the final state. This is why prompt phrasing
+              matters so absurdly much. It's not about what the model "understands." It's about which eigenmodes get
+              activated first.</p>
+            <p><strong>Getting worse on long-context tasks.</strong> The deeper the model, the more layers available to
+              amplify unstable modes. Very deep models don't just add more computation. They add more amplification of
+              whatever structural instabilities exist. Depth makes the spectral problem worse, not better.</p>
           </div>
+
+          <p>These three failure modes look completely different on the surface. Different symptoms, different use
+            cases, different user complaints. But they have the same root cause: eigenvalues outside the unit circle,
+            amplifying without bound, with nothing to stop them.</p>
     </section>
 
     <div class="divider">
@@ -1080,42 +1188,93 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § DISSIPATIVITY -->
     <section class="section reveal">
-      <div class="section-tag">Section V</div>
-      <h2>What Real Physical Systems Do Differently</h2>
-      <p>The canonical model for memory in physical and engineered systems is the <strong>linear state-space
-          model</strong>:</p>
+      <div class="section-tag">Failure Four and Five</div>
+      <h2>Dissipativity and Bounded Evolution: What the Real World Does Differently</h2>
+
+      <p>To appreciate how badly unconstrained the Transformer is, you need to see what a properly constrained memory
+        system looks like. Real physical and engineered systems don't stabilize by accident. The stability is
+        structural. Someone put it there.</p>
+
+      <h3>The Linear State-Space System</h3>
+
+      <p>The canonical model for memory in physics and engineering is the linear state-space system:</p>
+
       <div class="math-block">
         <div class="math-label">Continuous Linear State-Space System</div>
-        $$\frac{dx}{dt} = Ax + Bu, \quad y = Cx + Du$$
+        $$\frac{dx}{dt} = Ax + Bu, \qquad y = Cx + Du$$
       </div>
-      <p>The matrix \( A \in \mathbb{R}^{n \times n} \) is the system matrix, and its spectrum is everything. For
-        stability, all eigenvalues of \( A \) must have strictly negative real parts, \( \text{Re}(\lambda_i(A)) < 0 \).
-          This is not an emergent property of training. In engineered systems, \( A \) is <em>designed</em> to have
-          this spectral property. In biological circuits, evolutionary pressure achieves it.</p>
 
-      <p>Physical systems are also <strong>dissipative</strong>: they continuously lose energy unless actively driven:
-      </p>
+      <p>The matrix \(A\) is the system matrix. Everything about the system's stability lives in \(A\). For memory to
+        fade when input stops, which is the only sane behavior, all eigenvalues of \(A\) must have strictly negative
+        real parts:</p>
+
       <div class="math-block">
-        <div class="math-label">Dissipativity Condition</div>
-        $$\frac{d}{dt}V(x) \leq -\alpha V(x) + \beta\|u\|^2, \quad \alpha > 0$$
-      </div>
-      <p>Without input, energy decreases exponentially. With input, energy is bounded by input power. Memory is retained
-        only when actively sustained, and this is exactly right. The Transformer makes no such distinction between
-        "sustaining existing memory" and "adding new information." It just adds.</p>
+        <div class="math-label">Stability Condition · Negative Real Parts</div>
+        $$\text{Re}(\lambda_i(A)) < 0 \quad \text{for all } i$$ </div>
 
-      <div class="compare-grid">
-        <div class="cmp">
-          <h4>Physical / LDS Memory</h4>
-          <p>Memory decays unless driven. Spectrum is engineered for selective retention. Energy bounded by input power.
-            Dissipativity ensures stability. Forgetting is structural.</p>
-        </div>
-        <div class="cmp dark">
-          <h4>Transformer Memory</h4>
-          <p>Memory accumulates without bound. No spectral engineering. Energy grows with depth. No dissipation
-            mechanism. Forgetting is accidental, not guaranteed by structure.</p>
-        </div>
-      </div>
+          <p>In a control system, an engineer picks \(A\) to satisfy this before writing a single line of code. In
+            biological neural circuits, evolution selects for it. The spectral property of \(A\) is not an emergent
+            property of running the system for a long time on lots of data. It is a design requirement. It has to be
+            true from the start, or the system will blow up.</p>
+
+          <h3>Dissipation Is the Mechanism, Not the Bug</h3>
+
+          <p>Physical memory systems lose energy. Not because they're imperfect but because losing energy is what makes
+            them stable. This is called dissipativity, and a dissipative system satisfies:</p>
+
+          <div class="math-block">
+            <div class="math-label">Dissipativity · Energy Must Decay Without Input</div>
+            $$\frac{d}{dt}V(x) \leq -\alpha V(x) + \beta\|u\|^2, \qquad \alpha > 0$$
+          </div>
+
+          <p>The term \(-\alpha V(x)\) is natural decay. Without any input \(u\), energy decreases exponentially at rate
+            \(\alpha\). The term \(\beta\|u\|^2\) is the energy coming in from external input. Memory is sustained only
+            when it's actively being driven. When the input stops, the memory fades.</p>
+
+          <p>This sounds like a weakness. It isn't. A memory system that retains everything forever with no input isn't
+            stable. It's saturated. It can't update. Old information blocks new information. Forgetting is not a flaw in
+            physical memory systems. It's the structural feature that makes the whole thing work.</p>
+
+          <div class="compare-grid">
+            <div class="cmp">
+              <h4>Physical Memory System</h4>
+              <p>Memory decays unless actively driven. Spectrum is designed for selective retention. Energy is bounded
+                by input power. Dissipation enforces stability. Forgetting is structural and guaranteed by the
+                mathematics.</p>
+            </div>
+            <div class="cmp dark">
+              <h4>Transformer Memory</h4>
+              <p>Memory accumulates without bound. No spectral design. Energy grows with depth. No dissipation
+                mechanism. Forgetting is accidental, not guaranteed by anything. Old context and new context compete
+                without a principled resolution mechanism.</p>
+            </div>
+          </div>
+
+          <p>The Transformer makes no distinction between "sustain this memory because it's still relevant" and "add
+            this new information." It just adds. Every layer. Every token. The architecture has no concept of forgetting
+            by design. Everything that enters the residual stream stays there and gets amplified.</p>
+
+          <h3>Bounded Evolution: The Fifth Failure</h3>
+
+          <p>The final condition is the most concrete. A stable memory system must keep its state within a bounded
+            region of space. States that wander off to infinity cannot represent meaningful content. They are numerical
+            garbage.</p>
+
+          <div class="math-block">
+            <div class="math-label">Bounded Evolution · What Must Hold</div>
+            $$\|x_k\| \leq C \quad \text{for all layers } k$$
+          </div>
+
+          <p>For a physical system with stable \(A\) and bounded input, this is guaranteed by the spectral property. You
+            get a concrete exponential bound on how far the state can wander. You can write down the constant \(C\) from
+            first principles.</p>
+
+          <p>The Transformer has no such bound. Layer Norm is the only mechanism that limits state magnitude, and Layer
+            Norm is applied within sub-components, not globally. The overall hidden state can and does grow with depth.
+            There is no derivable constant \(C\) that holds in general. The bound, if it exists at all for a given
+            model, is an empirical accident of training, not a structural guarantee.</p>
     </section>
 
     <div class="divider">
@@ -1124,32 +1283,73 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § S4 CONTRAST -->
     <section class="section reveal">
-      <div class="section-tag">Section VI</div>
-      <h2>State Space Models: The Structured Alternative</h2>
-      <p>The structural deficiencies of the Transformer motivated <strong>Structured State Space Models (S4)</strong>
-        and successors (S5, Mamba), which explicitly build stability into the architecture. S4 begins with the
-        continuous-time LDS and discretizes via the matrix exponential, not Euler:</p>
+      <div class="section-tag">What Right Looks Like</div>
+      <h2>How S4 Actually Solves This</h2>
+
+      <p>The five failures of the Transformer are not just theoretical observations. They directly motivated a new class
+        of architectures: Structured State Space Models. S4, then S5, then Mamba. These models were built by researchers
+        who took the dynamical systems requirements seriously first and designed the architecture to satisfy them from
+        the ground up.</p>
+
+      <h3>Start With a Stable Matrix</h3>
+
+      <p>S4 begins with the continuous linear state-space system. Same equations we wrote above. The key is the choice
+        of \(A\). S4 uses the <strong>HiPPO matrix</strong>, which stands for High-order Polynomial Projection Operator.
+        It's a carefully constructed matrix where the hidden state continuously maintains an optimal approximation of
+        the input history using orthogonal polynomials.</p>
+
+      <p>Crucially, the HiPPO matrix is designed so that all its eigenvalues have strictly negative real parts. This is
+        not a training outcome. This is a mathematical property of the matrix that researchers proved analytically
+        before any training happened.</p>
+
+      <h3>Discretize Correctly</h3>
+
+      <p>To apply S4 to discrete sequences, you need to discretize the continuous system. S4 uses the matrix
+        exponential, not Euler:</p>
+
+      <div class="math-block">
+        <div class="math-label">S4 Discretization · The Right Way to Step</div>
+        $$\bar{A} = e^{A\Delta t}, \qquad \bar{B} = A^{-1}(e^{A\Delta t} - I)\,B$$
+        $$x_{k+1} = \bar{A}\, x_k + \bar{B}\, u_k$$
+      </div>
+
+      <p>Now compare the two approaches side by side:</p>
 
       <div class="compare-grid">
         <div class="cmp">
-          <h4>Transformer (Forward Euler)</h4>
-          $$x_{k+1} = (I + J_{f_k})\,x_k$$
-          <p style="margin-top:12px">Eigenvalues are \(1+\lambda_i\). No stability guarantee. Can expand freely.</p>
+          <h4>Transformer · Forward Euler</h4>
+          <p>Transition matrix is \(I + J_{f_k}\). Eigenvalues are \(1 + \lambda_i\). No constraint keeps them inside
+            the unit circle. Stability is not enforced anywhere.</p>
         </div>
         <div class="cmp dark">
-          <h4>S4 (Matrix Exponential)</h4>
-          $$x_{k+1} = e^{A\Delta t}\,x_k + \bar{B}\,u_k$$
-          <p style="margin-top:12px">Since \(\text{Re}(\lambda_i(A)) < 0\), all eigenvalues of \(e^{A\Delta t}\) satisfy
-              \(|\cdot| < 1\). Stability is structural.</p>
+          <h4>S4 · Matrix Exponential</h4>
+          <p>Transition matrix is \(e^{A\Delta t}\). Because \(\text{Re}(\lambda_i(A)) < 0\), all eigenvalues of
+              \(e^{A\Delta t}\) satisfy \(|\cdot| < 1\). Stability is structural.</p>
         </div>
       </div>
 
-      <p>The S4 update is a genuine contraction. It <em>is</em> Lyapunov-stable. It <em>has</em> spectral structure that
-        selectively retains memory in low-decay modes and forgets noise in high-decay modes. These are not training
-        artifacts; they are structural guarantees baked into the matrix \( A \).</p>
-      <div class="pull-quote">"The Transformer accumulates. The SSM flows. One adds whatever it learned directly to
-        memory. The other evolves memory according to stable internal dynamics."</div>
+      <p>The reason this works is a clean piece of mathematics. When \(A\) has eigenvalues with negative real parts:</p>
+
+      <div class="math-block">
+        <div class="math-label">Why the Matrix Exponential Guarantees Stability</div>
+        $$|\lambda_i(e^{A\Delta t})| = e^{\,\text{Re}(\lambda_i(A))\cdot\Delta t} < 1 \quad \text{because }
+          \text{Re}(\lambda_i(A)) < 0$$ </div>
+
+          <p>No matter what \(\Delta t\) you pick, as long as \(A\) is stable, every eigenvalue of \(\bar{A}\) has
+            magnitude strictly less than 1. The S4 update is a genuine contraction. It has a Lyapunov function. It has
+            spectral stability. It is dissipative. It maintains bounded evolution. It satisfies all five conditions the
+            Transformer violates.</p>
+
+          <p>This is not luck. The S4 researchers sat down with the mathematics of dynamical systems, wrote down the
+            requirements, and built an architecture that satisfies them. That's the entire point. You can design
+            stability in, or you can leave it out and wonder why your model keeps breaking.</p>
+
+          <div class="pull-quote">The Transformer accumulates. The SSM flows. One adds whatever it learned directly into
+            memory at full force every layer. The other evolves memory according to stable dynamics that were
+            mathematically designed to hold. These are not two implementation choices for the same idea. They are two
+            fundamentally different philosophies about what memory even means.</div>
     </section>
 
     <div class="divider">
@@ -1158,18 +1358,21 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § SCORECARD -->
     <section class="section reveal">
-      <div class="section-tag">Synthesis</div>
+      <div class="section-tag">The Full Picture</div>
       <h2>Five Conditions. Zero Satisfied.</h2>
-      <p>Every single condition for stable memory evolution is either absent or only surface-patched by the Transformer.
-        S4, designed with dynamical systems theory in mind, satisfies all of them structurally:</p>
 
-      <div style="overflow-x:auto">
+      <p>Let's put the complete picture in one place. These are the five conditions. Any system claiming to be a
+        reliable memory system needs all of them. The Transformer satisfies zero of them by structural design. S4
+        satisfies all five by structural design.</p>
+
+      <div style="overflow-x:auto;">
         <table class="stab-table">
           <thead>
             <tr>
               <th>Condition</th>
-              <th>Math Requirement</th>
+              <th>Mathematical Requirement</th>
               <th>Transformer</th>
               <th>S4 / SSM</th>
             </tr>
@@ -1183,39 +1386,76 @@
             </tr>
             <tr>
               <td>Lyapunov Stability</td>
-              <td>\(\exists V: V(T(x))\leq V(x)\)</td>
-              <td class="td-fail">✗ Norm grows</td>
+              <td>\(\exists\,V:\;V(T(x))\leq V(x)\)</td>
+              <td class="td-fail">✗ Norm always grows</td>
               <td class="td-pass">✓ By design</td>
             </tr>
             <tr>
               <td>Spectral Stability</td>
               <td>\(|\mu_i|<1\) for all eigenvalues</td>
-              <td class="td-fail">✗ No constraint</td>
+              <td class="td-fail">✗ Unconstrained</td>
               <td class="td-pass">✓ By construction</td>
             </tr>
             <tr>
               <td>Dissipativity</td>
-              <td>\(\frac{dV}{dt}\leq-\alpha V+\beta\|u\|^2\)</td>
+              <td>\(\dot{V}\leq-\alpha V+\beta\|u\|^2\)</td>
               <td class="td-fail">✗ No decay term</td>
               <td class="td-pass">✓ Via stable A</td>
             </tr>
             <tr>
               <td>Bounded Evolution</td>
               <td>\(\|x_k\|\leq C\) for all \(k\)</td>
-              <td class="td-fail">✗ LayerNorm only</td>
+              <td class="td-fail">✗ LayerNorm is a patch</td>
               <td class="td-pass">✓ Exponential bound</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <p>Transformers work extraordinarily well on tasks we give them, partly because training data is structured,
-        finite depth limits how much instability accumulates, and softmax provides partial damping. But these are
-        empirical patches, not structural guarantees. The moment you push outside training distribution, longer
-        contexts, adversarial prompts, genuine long-horizon memory, the structural deficiencies surface as observable
-        failures.</p>
-      <p>Hallucination, context drop, narrative commitment, and token bias are all fingerprints of the same underlying
-        problem: a state evolution system with no contraction, no Lyapunov function, and no spectral constraint.</p>
+      <h3>But It Works. How?</h3>
+
+      <p>At this point you are probably thinking: if all five conditions fail, why does GPT-5 work at all? It clearly
+        produces useful outputs. It clearly doesn't explode most of the time. Something must be keeping it together.</p>
+
+      <p>You're right. Three things partially save it in practice, and it's worth being honest about what they are and
+        what they aren't:</p>
+
+      <ul>
+        <li><strong>Finite depth puts a ceiling on the damage.</strong> Unstable eigenmodes can only get amplified as
+          many times as there are layers. A 96-layer model amplifies things 96 times, not infinitely. The instability is
+          bounded by the architecture. But it is still there, it grows with depth, and "bounded by 96 layers of
+          amplification" is not the same as "stable."</li>
+        <li><strong>Training data has enormous structure.</strong> Human language is deeply patterned. The optimization
+          process accidentally induces approximate stability in the most common linguistic regimes because the training
+          distribution forces it. The Jacobians of the learned functions happen to have mostly well-behaved eigenvalues
+          on the training distribution. But this is emergent and fragile, not structural and guaranteed. Move
+          off-distribution and it falls apart.</li>
+        <li><strong>Softmax provides partial damping.</strong> Attention weights sum to 1. This limits how much any
+          single token can dominate the attention output. It is a partial numerical brake. It does not enforce
+          contraction. It does not create a Lyapunov function. But it does prevent the most extreme forms of
+          single-direction explosion in the attention mechanism specifically.</li>
+      </ul>
+
+      <p>These three things together mean the Transformer mostly works within a well-defined comfortable regime.
+        Reasonable prompts, reasonable context lengths, tasks similar to training data. Within that regime, the
+        structural failures are present but often not severe enough to manifest obviously.</p>
+
+      <p>Push outside it and the mathematics takes over. Longer contexts. Adversarial prompts. Tasks requiring genuine
+        multi-step memory. Novel domains. Novel reasoning structures. Anywhere the training distribution patches stop
+        covering the structural failures, you get the failures. Hallucinations that compound instead of correcting.
+        Context that drops after a few thousand tokens. Confident wrong answers that double down under questioning.</p>
+
+      <p>These are not bugs that will get fixed with more data or more parameters. They are theorems. They are
+        consequences of the mathematical structure of the architecture. They will keep happening as long as the
+        architecture violates these five conditions. More scale makes them worse in deep models, not better.</p>
+
+      <div class="aside">
+        <span class="aside-icon">📌</span>
+        <p>I want to be precise about what this chapter is and isn't saying. It isn't saying the Transformer is useless.
+          It clearly isn't. It's saying that its failure modes are mathematically inevitable, and that understanding the
+          math is the only way to actually fix them rather than patching them with more compute and hoping for the best.
+        </p>
+      </div>
 
       <!-- SHARE -->
       <div class="share-bar">
@@ -1246,35 +1486,53 @@
     </section>
 
     <!-- CHAPTER NAVIGATION -->
-    <nav class="chapter-nav" aria-label="Chapter navigation">
+    <nav class="chapter-nav">
       <a class="cnav-cell prev" href="chapter1.html">
         <div class="cnav-dir">Previous</div>
         <div class="cnav-title">The Curse of Euler Integration</div>
       </a>
       <span class="cnav-cell next disabled">
         <div class="cnav-dir">Next Chapter</div>
-        <div class="cnav-title">Attention Is Not Reasoning: Coming Soon</div>
+        <div class="cnav-title">Attention Is Not Reasoning · Coming Soon</div>
       </span>
     </nav>
 
   </main>
 
-  <!-- TEASER -->
+  <!-- CONCLUSION -->
   <footer class="conclusion">
     <div class="conclusion-inner">
-      <div class="section-tag" style="opacity:1;transform:none;">Chapter 3 Preview</div>
-      <h2>The Energy Problem</h2>
-      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">We've shown the Transformer violates contraction,
-        Lyapunov stability, spectral stability, and dissipativity. But there's a deeper question: <em>what does the
-          energy actually do across layers?</em></p>
-      <p style="color:rgba(220,228,238,.65);">In Chapter 3, we show that softmax attention is structurally incapable of
-        logical inference, and prove why every "reasoning" benchmark is measuring something fundamentally different from
-        reasoning.</p>
-      <div class="next-chapter" style="pointer-events:none;opacity:.6;">
-        <div class="next-label">Coming Next → Chapter 03</div>
+      <div class="section-tag" style="opacity:1;transform:none;">What's Next</div>
+      <h2>We've Shown the Structure Is Broken.<br>Now We Look at the Mechanism.</h2>
+
+      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">Chapter 2 showed that the Transformer violates all five
+        conditions for stable memory. Chapter 1 showed the integration method is broken. Together, these two chapters
+        establish that the mathematical foundation of every modern LLM is structurally unsound at two separate levels
+        simultaneously.</p>
+
+      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">But there's something we've been treating as a black
+        box throughout both chapters: the attention mechanism itself. We've called it the "steering engine." We've
+        described it as "importance matching." We've shown it activates eigendirections that then get amplified by Euler
+        integration through an unconstrained dynamical system.</p>
+
+      <p style="color:rgba(220,228,238,.65);margin-bottom:32px;">What we haven't done is ask whether the attention
+        mechanism can actually reason. Not whether it produces plausible text. Whether the computation it performs is
+        capable of logical inference. In Chapter 3, we open that question. The answer is uncomfortable. Softmax
+        attention is a weighted average. We prove, from the mathematics of the operation itself, why weighted averaging
+        cannot perform logical inference, and what every "reasoning benchmark" is actually measuring when it reports
+        impressive numbers.</p>
+
+      <div class="next-chapter">
+        <div class="next-label">Coming Next · Chapter 03</div>
         <div class="next-title">Attention Is Not Reasoning</div>
         <p class="next-desc">Softmax attention is a weighted average over value vectors. We prove why this operation
-          cannot perform logical inference, and what that means for every reasoning benchmark you've seen.</p>
+          cannot perform logical inference, and what every reasoning benchmark is actually measuring.</p>
+      </div>
+
+      <div class="aside" style="margin-top:40px;">
+        <span class="aside-icon">👋</span>
+        <p>Follow and subscribe to get notified when Chapter 3 drops. The next one is going to make a lot of people
+          uncomfortable. It definitely made me uncomfortable when I worked through the math.</p>
       </div>
     </div>
   </footer>
@@ -1286,43 +1544,18 @@
   </footer>
 
   <script>
-    // PROGRESS + NAV
-    const _bar = document.getElementById('progress-bar');
-    const _nav = document.getElementById('navbar');
-    if (_bar && _nav) {
-      window.addEventListener('scroll', () => {
-        const t = document.body.scrollHeight - window.innerHeight;
-        _bar.style.width = (window.scrollY / t * 100) + '%';
-        _nav.classList.toggle('show', window.scrollY > 180);
-      });
-    }
-
-    // SCROLL REVEAL
-    const _obs = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.07 });
+    const _bar = document.getElementById('progress-bar'), _nav = document.getElementById('navbar');
+    if (_bar && _nav) { window.addEventListener('scroll', () => { const t = document.body.scrollHeight - window.innerHeight; _bar.style.width = (window.scrollY / t * 100) + '%'; _nav.classList.toggle('show', window.scrollY > 180); }); }
+    const _obs = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.07 });
     document.querySelectorAll('.reveal').forEach(el => _obs.observe(el));
-
-    // SHARE
-    function initShare(title) {
-      const url = window.location.href;
-      const enc = encodeURIComponent(url);
-      const txt = encodeURIComponent(title + ' — The Broken Math of Modern AI');
-      const tw = document.getElementById('share-twitter');
-      const li = document.getElementById('share-linkedin');
-      const cp = document.getElementById('share-copy');
-      const msg = document.getElementById('copy-msg');
+    (function () {
+      const url = window.location.href, enc = encodeURIComponent(url), txt = encodeURIComponent('Ch.02 · The Unconstrained Machine · The Broken Math of Modern AI');
+      const tw = document.getElementById('share-twitter'), li = document.getElementById('share-linkedin'), cp = document.getElementById('share-copy'), msg = document.getElementById('copy-msg');
       if (tw) tw.href = `https://twitter.com/intent/tweet?text=${txt}&url=${enc}`;
       if (li) li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`;
-      if (cp) cp.addEventListener('click', () => {
-        navigator.clipboard.writeText(url).then(() => {
-          if (msg) { msg.style.opacity = 1; setTimeout(() => msg.style.opacity = 0, 2200); }
-        });
-      });
-    }
-
+      if (cp) cp.addEventListener('click', () => { navigator.clipboard.writeText(url).then(() => { if (msg) { msg.style.opacity = 1; setTimeout(() => msg.style.opacity = 0, 2200); } }); });
+    })();
   </script>
-  <script>initShare('Ch.02: The Unconstrained Machine');</script>
 </body>
 
 </html>

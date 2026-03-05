@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ch.01: The Curse of Euler Integration | The Broken Math of Modern AI</title>
+  <title>Ch.01 — The Curse of Euler Integration | The Broken Math of Modern AI</title>
   <meta name="description"
-    content="Why every modern LLM runs on Forward Euler integration, and why that single equation explains drift, hallucination, and overcommitment.">
+    content="Why every modern LLM runs on Forward Euler integration — and why that single equation explains drift, hallucination, and overcommitment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&display=swap');
-
     :root {
       --void: #080a0f;
       --deep: #0d1117;
@@ -46,7 +49,6 @@
       line-height: 1.85;
     }
 
-    /* PROGRESS */
     #progress-bar {
       position: fixed;
       top: 0;
@@ -59,7 +61,6 @@
       transition: width .1s linear;
     }
 
-    /* NAV */
     #navbar {
       position: fixed;
       top: 0;
@@ -97,21 +98,6 @@
       letter-spacing: .1em;
     }
 
-    .nav-home {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      transition: color .2s;
-    }
-
-    .nav-home:hover {
-      color: var(--accent);
-    }
-
-    /* REVEAL */
     .reveal {
       opacity: 0;
       transform: translateY(26px);
@@ -123,7 +109,6 @@
       transform: none;
     }
 
-    /* DIVIDER */
     .divider {
       display: flex;
       align-items: center;
@@ -143,7 +128,6 @@
       color: var(--dim);
     }
 
-    /* MATH */
     .math-block {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -151,6 +135,16 @@
       padding: 24px 28px;
       margin: 28px 0;
       border-radius: 0 6px 6px 0;
+      overflow-x: auto;
+    }
+
+    .math-block-inner {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 2px solid rgba(249, 115, 22, .4);
+      padding: 14px 18px;
+      margin: 14px 0 0;
+      border-radius: 0 4px 4px 0;
       overflow-x: auto;
     }
 
@@ -163,7 +157,6 @@
       margin-bottom: 12px;
     }
 
-    /* CALLOUT */
     .callout {
       background: var(--panel);
       border: 1px solid var(--border2);
@@ -198,7 +191,10 @@
       margin-bottom: 0;
     }
 
-    /* PULL QUOTE */
+    .callout p+p {
+      margin-top: 14px;
+    }
+
     .pull-quote {
       font-family: 'Syne', sans-serif;
       font-size: clamp(1.1rem, 2.2vw, 1.45rem);
@@ -211,7 +207,6 @@
       background: var(--a-dim);
     }
 
-    /* ANALOGY */
     .analogy {
       border: 1px dashed var(--border2);
       padding: 26px 30px;
@@ -240,7 +235,6 @@
       font-size: .97rem;
     }
 
-    /* SECTION TAG */
     .section-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
@@ -261,7 +255,6 @@
       max-width: 60px;
     }
 
-    /* H2 H3 */
     h2 {
       font-family: 'Syne', sans-serif;
       font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -274,7 +267,7 @@
 
     h3 {
       font-family: 'Syne', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--accent);
       margin: 44px 0 16px;
@@ -305,7 +298,51 @@
       border-radius: 3px;
     }
 
-    /* SHARE BAR */
+    ul {
+      margin: 0 0 20px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    ul li {
+      color: rgba(220, 228, 238, .85);
+      padding: 6px 0 6px 0;
+      position: relative;
+      font-size: .97rem;
+      line-height: 1.7;
+      list-style: disc;
+      margin-left: 22px;
+    }
+
+    ul li::before {
+      content: '';
+    }
+
+    .aside {
+      background: rgba(249, 115, 22, .06);
+      border: 1px solid rgba(249, 115, 22, .2);
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .aside-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .aside p {
+      color: rgba(220, 228, 238, .6);
+      font-style: italic;
+      font-size: .92rem;
+      margin-bottom: 0;
+      line-height: 1.7;
+    }
+
     .share-bar {
       display: flex;
       align-items: center;
@@ -364,7 +401,6 @@
       margin-left: 4px;
     }
 
-    /* CHAPTER NAV */
     .chapter-nav {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -378,6 +414,7 @@
       padding: 24px 28px;
       text-decoration: none;
       transition: background .2s;
+      display: block;
     }
 
     .cnav-cell:hover {
@@ -418,73 +455,172 @@
       pointer-events: none;
     }
 
-    /* FOOTER */
-    footer.site-footer {
-      background: var(--deep);
-      border-top: 1px solid var(--border);
-      padding: 32px 6vw;
+    .stability-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin: 32px 0;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .stab-cell {
+      background: var(--panel);
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .stab-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .stab-label {
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .stab-math {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .stab-desc {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .stab-cell.good .stab-label {
+      color: var(--green);
+    }
+
+    .stab-cell.neutral .stab-label {
+      color: var(--yellow);
+    }
+
+    .stab-cell.bad .stab-label {
+      color: var(--red);
+    }
+
+    .terminal {
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin: 28px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      line-height: 1.9;
+    }
+
+    .terminal-line {
       display: flex;
-      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .t-prompt {
+      color: var(--accent);
+      flex-shrink: 0;
+      min-width: 56px;
+    }
+
+    .t-comment {
+      color: var(--muted);
+    }
+
+    .t-value {
+      color: var(--green);
+    }
+
+    .t-danger {
+      color: var(--red);
+    }
+
+    .t-warn {
+      color: var(--yellow);
+    }
+
+    .layer-diagram {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 28px;
+      margin: 32px 0;
+    }
+
+    .layer-diagram-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .layers-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .layer-row {
+      display: flex;
       align-items: center;
-      flex-wrap: wrap;
       gap: 12px;
     }
 
-    .footer-brand {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-
-    .footer-copy {
+    .layer-num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       color: var(--dim);
+      width: 36px;
+      flex-shrink: 0;
     }
 
-    .footer-home {
+    .layer-bar-wrap {
+      flex: 1;
+      height: 28px;
+      background: rgba(255, 255, 255, .04);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .layer-bar {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(249, 115, 22, .3), rgba(249, 115, 22, .75));
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .layer-bar-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: .1em;
-      text-transform: uppercase;
+      font-size: 9px;
+      color: rgba(255, 255, 255, .7);
+      white-space: nowrap;
     }
 
-    .footer-home:hover {
+    .layer-bias {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
       color: var(--accent);
+      width: 80px;
+      text-align: right;
+      flex-shrink: 0;
     }
 
-    /* CONTENT WRAPPER */
-    .content {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 80px 32px 100px;
-    }
-
-    .section {
-      margin-bottom: 80px;
-    }
-
-    @media(max-width:640px) {
-      .chapter-nav {
-        grid-template-columns: 1fr;
-      }
-
-      .content {
-        padding: 60px 20px 80px;
-      }
-
-      #navbar {
-        padding: 12px 5vw;
-      }
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
-  <style>
-    /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -493,16 +629,13 @@
       padding: 0 6vw;
       position: relative;
       overflow: hidden;
-      background: var(--void);
     }
 
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(249, 115, 22, .04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(249, 115, 22, .04) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(249, 115, 22, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(249, 115, 22, .04) 1px, transparent 1px);
       background-size: 60px 60px;
       animation: grid-shift 20s linear infinite;
       pointer-events: none;
@@ -510,7 +643,7 @@
 
     @keyframes grid-shift {
       to {
-        transform: translateY(60px);
+        transform: translateY(60px)
       }
     }
 
@@ -625,174 +758,6 @@
       text-transform: uppercase;
     }
 
-    /* ── STABILITY GRID ── */
-    .stability-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      margin: 32px 0;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .stab-cell {
-      background: var(--panel);
-      padding: 22px 20px;
-      text-align: center;
-    }
-
-    .stab-cell .stab-icon {
-      font-size: 1.6rem;
-      margin-bottom: 10px;
-    }
-
-    .stab-cell .stab-label {
-      font-family: 'Syne', sans-serif;
-      font-size: .82rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .stab-cell .stab-math {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .72rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .stab-cell .stab-desc {
-      font-size: .8rem;
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    .stab-cell.good .stab-label {
-      color: var(--green);
-    }
-
-    .stab-cell.neutral .stab-label {
-      color: var(--yellow);
-    }
-
-    .stab-cell.bad .stab-label {
-      color: var(--red);
-    }
-
-    /* ── TERMINAL ── */
-    .terminal {
-      background: #0a0c10;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 24px 28px;
-      margin: 28px 0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .82rem;
-      line-height: 1.8;
-    }
-
-    .terminal-line {
-      display: flex;
-      gap: 16px;
-    }
-
-    .t-prompt {
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    .t-comment {
-      color: var(--muted);
-    }
-
-    .t-value {
-      color: var(--green);
-    }
-
-    .t-danger {
-      color: var(--red);
-    }
-
-    .t-warn {
-      color: var(--yellow);
-    }
-
-    /* ── LAYER DIAGRAM ── */
-    .layer-diagram {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 28px;
-      margin: 32px 0;
-    }
-
-    .layer-diagram-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .layers-visual {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    .layer-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .layer-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--dim);
-      width: 28px;
-      flex-shrink: 0;
-    }
-
-    .layer-bar-wrap {
-      flex: 1;
-      height: 28px;
-      background: rgba(255, 255, 255, .04);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .layer-bar {
-      height: 100%;
-      background: linear-gradient(90deg, rgba(249, 115, 22, .3), rgba(249, 115, 22, .75));
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-    }
-
-    .layer-bar-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: rgba(255, 255, 255, .7);
-      white-space: nowrap;
-    }
-
-    .layer-bias {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      color: var(--accent);
-      width: 80px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* ── CONCLUSION ── */
     .conclusion {
       background: var(--deep);
       border-top: 1px solid var(--border);
@@ -811,7 +776,7 @@
     }
 
     .next-chapter {
-      margin-top: 36px;
+      margin-top: 32px;
       border: 1px solid var(--border2);
       padding: 28px 32px;
       border-radius: 4px;
@@ -858,6 +823,55 @@
       margin: 0;
     }
 
+    footer.site-footer {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      padding: 32px 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--dim);
+    }
+
+    .footer-home {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .footer-home:hover {
+      color: var(--accent);
+    }
+
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 32px 100px;
+    }
+
+    .section {
+      margin-bottom: 80px;
+    }
+
     @keyframes fade-up {
       from {
         opacity: 0;
@@ -874,6 +888,22 @@
       .stability-grid {
         grid-template-columns: 1fr;
       }
+
+      .chapter-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 60px 20px 80px;
+      }
+
+      #navbar {
+        padding: 12px 5vw;
+      }
+
+      .hero {
+        padding: 0 5vw;
+      }
     }
   </style>
 </head>
@@ -881,13 +911,11 @@
 <body>
 
   <div id="progress-bar"></div>
-
   <nav id="navbar">
     <a class="nav-series" href="index.html">The Broken Math of Modern AI</a>
-    <span class="nav-chapter">Ch.01: Euler Integration</span>
+    <span class="nav-chapter">Ch.01 · Euler Integration</span>
   </nav>
 
-  <!-- HERO -->
   <header class="hero">
     <div class="hero-inner">
       <div class="eyebrow">
@@ -897,38 +925,36 @@
       <h1>The <span class="accent">Curse</span><br>of Euler</h1>
       <div class="hero-sub">Why the world's most advanced AI runs on the crudest math known to man</div>
       <p class="hero-desc">Everyone talks about billions of parameters. Nobody talks about the equation. Underneath
-        GPT-4, Claude, and every modern LLM is a single update rule, and it is structurally broken in ways that explain
+        GPT-4, Claude, and every modern LLM is a single update rule. It is structurally broken in ways that explain
         almost every failure you've ever seen.</p>
     </div>
     <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span class="scroll-text">Scroll to begin</span>
+      <div class="scroll-line"></div><span class="scroll-text">Scroll to begin</span>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <main class="content">
 
+    <!-- § INTRO -->
     <section class="section reveal">
       <div class="section-tag">The Problem Nobody Talks About</div>
-      <h2>Everyone Counts Parameters.<br>Nobody Reads the Equation.</h2>
-      <p>When people talk about modern large language models (GPT-4, Claude, Gemini), they talk about scale. They obsess
-        over billions of parameters, trillions of tokens, the "secret sauce" of RLHF, and the massive GPU clusters
+      <h2>AI is Dumb. Here's the Proof.</h2>
+      <p>When people talk about modern large language models: GPT-4, Claude, Gemini, or the heavyweights like
+        <strong>GPT-5</strong>, they usually talk about scale. They obsess over billions of parameters, trillions of
+        tokens, the "secret sauce" of Reinforcement Learning from Human Feedback (RLHF), and the massive GPU clusters
         humming in the desert.</p>
-      <p>Almost nobody talks about <strong>the equation.</strong></p>
-      <p>But every single one of these systems runs on the same fundamental update rule. This isn't just a clever neural
-        network trick; it is a dynamical system. Specifically, it is a very primitive, very stubborn numerical
-        integrator called <strong>Forward Euler</strong>. And it has been quietly shaping every drift, every
-        hallucination, every confident wrong answer you've seen from a modern LLM.</p>
-      <p>If you want to understand why these models overcommit to wrong interpretations, double down instead of
-        correcting themselves, and hallucinate with the absolute confidence of someone who has never been wrong in their
-        life, you have to look at the math beneath the hood.</p>
-      <div class="callout">
-        <div class="callout-icon">The Central Claim</div>
-        <p>We have built the most sophisticated thinking machines in history on top of the crudest numerical solver
-          known to man. And the failure modes we call "hallucination," "drift," and "overconfidence" are not mysteries.
-          They are mathematical theorems.</p>
+      <p><strong>Almost nobody talks about the equation.</strong></p>
+      <div class="aside">
+        <span class="aside-icon">🧠</span>
+        <p>This is my crazy work behind the blogs. Digging into the actual mathematics powering every LLM you've ever
+          used, and finding what nobody wants to say out loud.</p>
       </div>
+      <p>But every one of these systems runs on the same fundamental update rule. This rule isn't just a clever neural
+        network trick. It is a <strong>dynamical system</strong>. Specifically, it is a very primitive, very stubborn
+        numerical integrator.</p>
+      <p>If you want to understand why LLMs drift, why they overcommit, why they double down on wrong interpretations,
+        and why they sometimes hallucinate with the absolute confidence of a person who has never been wrong in their
+        life, you have to look at the math beneath the hood.</p>
     </section>
 
     <div class="divider">
@@ -937,29 +963,28 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § DYNAMICAL SYSTEMS -->
     <section class="section reveal">
       <div class="section-tag">Foundations</div>
       <h2>A Dynamical System Is Just Memory in Motion</h2>
-      <p>Forget AI for a second. Think about a swinging pendulum, a cooling cup of coffee, or a car coasting on a
-        highway. In each case, there's a <strong>state</strong> \( x \): position, temperature, velocity, and that state
-        changes over time according to a rule.</p>
-      <p>Mathematically, a continuous dynamical system looks like this:</p>
+      <p>Forget AI for a second. Imagine a physical system: a swinging pendulum, a cooling cup of coffee, or a car
+        coasting on a highway.</p>
+      <p>In each case, there is a <strong>state</strong> \(x\): position, velocity, temperature — and that state changes
+        over time according to a rule. Mathematically, a continuous dynamical system looks like this:</p>
       <div class="math-block">
         <div class="math-label">Continuous Dynamical System</div>
         $$\frac{dx}{dt} = f(x)$$
       </div>
-      <p>The state \( x(t) \) evolves smoothly. The function \( f \) is the "engine": it tells you exactly how the
-        system changes at every nanosecond. The crucial word is <em>smoothly</em>. The system doesn't teleport. It
-        doesn't make wild jumps. It flows.</p>
-      <p>Now think about memory. When you read a sentence, your brain doesn't just "store" words; it evolves an internal
-        state of understanding. Evidence nudges your belief. Context dampens your doubts. A well-behaved memory system
-        moves continuously. It doesn't leap from "I think it's a cat" to "IT IS DEFINITELY A NUCLEAR SUBMARINE" in a
-        single step.</p>
-      <div class="analogy">
-        <div class="analogy-label">Intuition</div>
-        <p>A marble in a bowl is a stable dynamical system. Push it anywhere, it rolls back to center. The bowl's
-          geometry enforces stability. The question is: does the Transformer have a bowl? Or does it have a ramp?</p>
-      </div>
+      <p>The state \(x(t)\) evolves smoothly. The function \(f\) is the "engine." It tells you how the system changes at
+        every nanosecond.</p>
+      <p>If you nudge a <strong>stable system</strong> (like a marble in a bowl), it settles back down. If you nudge an
+        <strong>unstable system</strong> (like a pencil balanced on its tip), the disturbance grows.
+        <strong>Stability</strong> is the art of ensuring small errors don't blow up into catastrophes.</p>
+      <p>Now, think about memory. Memory isn't a static filing cabinet. It's a dynamical system. When you read a
+        sentence, your brain doesn't just "store" words; it evolves an internal "state" of understanding.</p>
+      <p><strong>Evidence nudges your belief; context dampens your doubts.</strong></p>
+      <p>A well-behaved memory system moves continuously. <em>It doesn't teleport from "I think it's a cat" to "IT IS
+          DEFINITELY A NUCLEAR SUBMARINE" in a single microsecond.</em></p>
     </section>
 
     <div class="divider">
@@ -968,69 +993,24 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § DISCIPLINE OF CONTINUOUS TIME -->
     <section class="section reveal">
-      <div class="section-tag">The Integration Problem</div>
-      <h2>When Computers Try to Simulate Continuous Reality</h2>
-      <p>Here's the uncomfortable truth: computers are digital. They can't do "continuous." They have to approximate the
-        smooth flow of a dynamical system by taking discrete <em>steps</em>.</p>
-      <p>The most naïve way to do this is called the <strong>Forward Euler Method</strong>. You look at where you are,
-        check your derivative, and jump forward by a fixed step size \( h \):</p>
+      <div class="section-tag">Continuous Time</div>
+      <h2>The Discipline of Continuous Time</h2>
+      <p>Take a very simple stable system:</p>
       <div class="math-block">
-        <div class="math-label">Forward Euler Update</div>
-        $$x_{k+1} = x_k + h \cdot f(x_k)$$
+        <div class="math-label">A Perfectly Stable Continuous System</div>
+        $$\frac{dx}{dt} = -5x$$
       </div>
-      <p>It's the first integration rule anyone learns. It's also the most dangerous one to use blindly.</p>
-
-      <h3>When Euler Goes Rogue</h3>
-      <p>Take a simple, perfectly stable continuous system: \( \frac{dx}{dt} = -5x \). This decays smoothly to zero. The
-        analytical solution is \( x(t) = x_0 e^{-5t} \), pure exponential decay. Beautiful. Stable. Now apply Forward
-        Euler with step size \( h = 1 \):</p>
+      <p>This system is "disciplined." Whatever the value of \(x\), it decays smoothly toward zero. The analytical
+        solution is:</p>
       <div class="math-block">
-        <div class="math-label">Euler Applied to Stable System (h = 1)</div>
-        $$x_{k+1} = x_k + (1)(-5x_k) = -4x_k \implies x_k = (-4)^k x_0$$
+        <div class="math-label">Analytical Solution · Pure Exponential Decay</div>
+        $$x(t) = x_0\,e^{-5t}$$
       </div>
-      <p>Instead of decaying to zero, the system <strong>explodes</strong>, flipping sign and growing 4× every single
-        step. A perfectly stable physical reality becomes chaos because the step was too big for the engine.</p>
-
-      <div class="terminal">
-        <div class="terminal-line"><span class="t-prompt">step 0</span><span>x =&nbsp; 1.000</span><span
-            class="t-comment">&nbsp; // initial state</span></div>
-        <div class="terminal-line"><span class="t-prompt">step 1</span><span>x = <span
-              class="t-warn">-4.000</span></span><span class="t-comment">&nbsp; // already flipped sign</span></div>
-        <div class="terminal-line"><span class="t-prompt">step 2</span><span>x = <span
-              class="t-danger">16.000</span></span><span class="t-comment">&nbsp; // growing, wrong sign</span></div>
-        <div class="terminal-line"><span class="t-prompt">step 3</span><span>x = <span
-              class="t-danger">-64.000</span></span><span class="t-comment">&nbsp; // exploding</span></div>
-        <div class="terminal-line"><span class="t-prompt">truth&nbsp;</span><span>x = <span
-              class="t-value">~0.000</span></span><span class="t-comment">&nbsp; // what should actually happen</span>
-        </div>
-      </div>
-
-      <h3>The Three Fates of Memory</h3>
-      <p>The stability of the discrete map depends entirely on the growth factor \( \Phi = |1 + h\lambda| \). Three
-        fates exist:</p>
-      <div class="stability-grid">
-        <div class="stab-cell good">
-          <div class="stab-icon">📉</div>
-          <div class="stab-label">Vanishing Memory</div>
-          <div class="stab-math">\(|\Phi| &lt; 1\)<br><br>\(|1 + h\lambda| &lt; 1\)</div>
-          <div class="stab-desc">System forgets perturbations. Stable. Noise dies out.</div>
-        </div>
-        <div class="stab-cell neutral">
-          <div class="stab-icon">📌</div>
-          <div class="stab-label">Perfect Persistence</div>
-          <div class="stab-math">\(|\Phi| = 1\)<br><br>\(\lambda = 0\)</div>
-          <div class="stab-desc">State holds forever. Neither growing nor decaying.</div>
-        </div>
-        <div class="stab-cell bad">
-          <div class="stab-icon">💥</div>
-          <div class="stab-label">Exploding Memory</div>
-          <div class="stab-math">\(|\Phi| &gt; 1\)<br><br>\(|1 + h\lambda| &gt; 1\)</div>
-          <div class="stab-desc">System amplifies noise until it destroys the signal.</div>
-        </div>
-      </div>
-      <p>For Euler to be stable, the step size \( h \) must be tiny relative to the system's dynamics. If you ignore
-        this and fix \( h = 1 \), you are gambling with stability at every single step.</p>
+      <p>If you hit this system with a hammer (a perturbation), the energy dissipates. It has <strong>built-in
+          damping</strong>. No matter how hard you push it, the system always finds its way back to zero.</p>
+      <p>But computers are digital. They can't do "continuous." They have to take <em>steps</em>.</p>
     </section>
 
     <div class="divider">
@@ -1039,60 +1019,74 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § FORWARD EULER -->
     <section class="section reveal">
-      <div class="section-tag">Opening the Hood</div>
-      <h2>The Transformer Is Forward Euler in Disguise</h2>
-      <p>Now we open the hood. Strip away the marketing, and a single Transformer layer is defined by one equation, the
-        <strong>Residual Connection</strong>:
-      </p>
+      <div class="section-tag">Numerical Methods</div>
+      <h2>Enter: The Forward Euler Method</h2>
+      <p>The simplest way to approximate a continuous system on a computer is the <strong>Forward Euler method</strong>.
+        You take the current state, look at the derivative, and jump forward by a "step size" \(h\):</p>
       <div class="math-block">
-        <div class="math-label">Transformer Layer Update (GPT-4, GPT-5, Claude, Gemini...)</div>
-        $$x_{k+1} = x_k + f_k(x_k)$$
+        <div class="math-label">Forward Euler Update Rule</div>
+        $$x_{k+1} = x_k + h \cdot f(x_k)$$
       </div>
-      <p>Compare to Euler: \( x_{k+1} = x_k + h \cdot f(x_k) \). The Transformer is Forward Euler with <strong>step size
-          permanently fixed at \( h = 1 \)</strong>. Not 0.01. Not adaptive. One. Maximum force. Every layer. Every
-        token. Every model.</p>
+      <p>It's the most basic integration rule in existence. It's also the most dangerous.</p>
 
-      <h3>Engine 1: The Matchmaker (Attention)</h3>
-      <p>Inside \( f_k(x_k) \), the Attention mechanism does <strong>vector importance matching</strong>. Every token is
-        projected into three spaces:</p>
-      <div class="callout">
-        <div class="callout-icon">The Q, K, V Decomposition</div>
-        <p><strong>Queries (Q):</strong> "What am I looking for?", e.g. the word "Mercury" searching for Space or
-          Chemistry context.<br><br>
-          <strong>Keys (K):</strong> "What do I contain?", e.g. "Orbit" carrying Space information.<br><br>
-          <strong>Values (V):</strong> "What is my actual semantic content?", the raw data to be transferred.
-        </p>
-      </div>
+      <h3>When Euler Goes Rogue</h3>
+      <p>Let's apply Euler to our stable system \(dx/dt = -5x\) with a step size of \(h = 1\):</p>
       <div class="math-block">
-        <div class="math-label">Attention: Similarity Score → Weights → Output</div>
-        $$\text{Attn}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)\!V$$
+        <div class="math-label">Euler Applied · h = 1, System = −5x</div>
+        $$x_{k+1} = x_k + (1)(-5x_k) = -4x_k \implies x_k = (-4)^k x_0$$
       </div>
-      <p>This is pure semantic importance matching. If "Orbit" gets weight 0.9, the model has <em>decided</em> it is the
-        most important context. No fact-check. No stabilizer. No second opinion. Just a score, a softmax, and a jump.
-      </p>
+      <p>Instead of decaying toward zero, the system <strong>explodes</strong>. It flips from positive to negative,
+        growing 4× every single step. A perfectly stable physical reality becomes a chaotic nightmare because the "step"
+        was too big for the "engine."</p>
+      <div class="terminal">
+        <div class="terminal-line"><span class="t-prompt">step 0</span><span>x =&nbsp;&nbsp;&nbsp;1.000</span><span
+            class="t-comment">&nbsp;&nbsp;// initial state</span></div>
+        <div class="terminal-line"><span class="t-prompt">step 1</span><span>x = <span
+              class="t-warn">-4.000</span></span><span class="t-comment">&nbsp;&nbsp;// flipped sign already</span>
+        </div>
+        <div class="terminal-line"><span class="t-prompt">step 2</span><span>x = <span
+              class="t-danger">16.000</span></span><span class="t-comment">&nbsp;&nbsp;// growing, wrong
+            direction</span></div>
+        <div class="terminal-line"><span class="t-prompt">step 3</span><span>x = <span
+              class="t-danger">-64.000</span></span><span class="t-comment">&nbsp;&nbsp;// catastrophic explosion</span>
+        </div>
+        <div class="terminal-line"><span class="t-prompt">truth</span><span>x = <span
+              class="t-value">~0.000</span></span><span class="t-comment">&nbsp;&nbsp;// what actually should
+            happen</span></div>
+      </div>
 
-      <h3>Engine 2: The Accelerator (FFNN)</h3>
-      <p>Once Attention gathers context, the Feed-Forward Network sharpens it. If Attention is the steering wheel, the
-        FFNN is the gas pedal:</p>
-      <div class="math-block">
-        <div class="math-label">Feed-Forward Network</div>
-        $$\text{FFN}(x) = \sigma(W_1 x + b_1)\,W_2 + b_2$$
-      </div>
-      <p>If Attention says "I'm 51% sure this is about a planet," the FFNN amplifies that to "it's definitely a planet,
-        push the state even harder in that direction." Then it hands that push directly to the Euler update at full
-        force.</p>
+      <h3>The Three Fates of Memory</h3>
+      <p>To understand how memory behaves in this discrete world, we have to look at the growth factor \(|\,1 +
+        h\lambda\,|\), call it <strong>Φ</strong>. In our discrete update \(x_{k+1} = \Phi\, x_k\), there are exactly
+        three mathematical scenarios for the "memory" of the system:</p>
 
-      <h3>The Complete Update Equation</h3>
-      <div class="math-block">
-        <div class="math-label">Full Transformer Layer: The Equation Under Every Modern LLM</div>
-        $$x_{k+1} = x_k + \underbrace{\text{FFN}\!\left(\text{LN}\!\left(x_k +
-        \text{Attn}(x_k)\right)\right)}_{f_k(x_k)}$$
+      <div class="stability-grid">
+        <div class="stab-cell good">
+          <div class="stab-icon">📉</div>
+          <div class="stab-label">Vanishing Memory</div>
+          <div class="stab-math">\(|\Phi| &lt; 1\)<br>\(|1 + h\lambda| &lt; 1\)</div>
+          <div class="stab-desc">The system forgets perturbations. Errors decay. Noise dies out. Stability.</div>
+          <div class="math-block-inner">$$\lim_{k \to \infty} x_k = 0$$</div>
+        </div>
+        <div class="stab-cell neutral">
+          <div class="stab-icon">📌</div>
+          <div class="stab-label">Perfect Persistence</div>
+          <div class="stab-math">\(|\Phi| = 1\)<br>\(\lambda = 0\)</div>
+          <div class="stab-desc">The state holds forever. Neither growing nor decaying. Frozen in time.</div>
+          <div class="math-block-inner">$$x_k = x_0 \;\;\forall\, k$$</div>
+        </div>
+        <div class="stab-cell bad">
+          <div class="stab-icon">💥</div>
+          <div class="stab-label">Exploding Memory</div>
+          <div class="stab-math">\(|\Phi| &gt; 1\)<br>\(|1 + h\lambda| &gt; 1\)</div>
+          <div class="stab-desc">The system amplifies noise until it destroys the signal. Instability.</div>
+          <div class="math-block-inner">$$\lim_{k \to \infty} |x_k| = \infty$$</div>
+        </div>
       </div>
-      <p>The architecture is locked into \( h = 1 \). No adaptive step control. No stability check. The entire result of
-        the matching-and-acceleration logic is injected into the memory stream at maximum force, every single layer.</p>
-      <div class="pull-quote">"Nothing in this equation stops the system from taking a bias. There is no fact-check.
-        There is no stabilizer. There is only the step."</div>
+      <p>The critical insight: for Euler to be stable, the step size \(h\) must be tiny enough relative to the system's
+        dynamics. If you ignore this and fix \(h = 1\), you are gambling with stability at every single step.</p>
     </section>
 
     <div class="divider">
@@ -1101,68 +1095,114 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § TRANSFORMER HOOD -->
     <section class="section reveal">
-      <div class="section-tag">A Concrete Failure</div>
-      <h2>The Mercury Problem: Hallucination Is Iterative Amplification</h2>
-      <p>Imagine the prompt: <strong>"Explain why Mercury is important."</strong> Mercury is ambiguous: planet, element,
-        Roman god, car brand. A stable memory system would hold this ambiguity open until evidence resolves it. The
-        Transformer cannot do this.</p>
-
-      <div class="layer-diagram">
-        <div class="layer-diagram-title">Planet Bias Amplification Across Transformer Layers</div>
-        <div class="layers-visual">
-          <div class="layer-row">
-            <div class="layer-num">L01</div>
-            <div class="layer-bar-wrap">
-              <div class="layer-bar" style="width:52%"><span class="layer-bar-text">Neutral, tiny planet lean</span>
-              </div>
-            </div>
-            <div class="layer-bias">+2% planet</div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-num">L10</div>
-            <div class="layer-bar-wrap">
-              <div class="layer-bar" style="width:62%"><span class="layer-bar-text">Attention finds "orbit,"
-                  "solar"</span></div>
-            </div>
-            <div class="layer-bias">+12% planet</div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-num">L24</div>
-            <div class="layer-bar-wrap">
-              <div class="layer-bar" style="width:75%"><span class="layer-bar-text">FFNN amplifies, "definitely
-                  space"</span></div>
-            </div>
-            <div class="layer-bias">+35% planet</div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-num">L48</div>
-            <div class="layer-bar-wrap">
-              <div class="layer-bar" style="width:90%"><span class="layer-bar-text">Planet signal dominates, reinforces
-                  itself</span></div>
-            </div>
-            <div class="layer-bias">+68% planet</div>
-          </div>
-          <div class="layer-row">
-            <div class="layer-num">L96</div>
-            <div class="layer-bar-wrap">
-              <div class="layer-bar" style="width:100%"><span class="layer-bar-text">Convinced. Unstoppable.</span>
-              </div>
-            </div>
-            <div class="layer-bias" style="color:var(--red)">+95% planet</div>
-          </div>
-        </div>
+      <div class="section-tag">Opening the Hood</div>
+      <h2>The Transformer Is Forward Euler in Disguise</h2>
+      <p>Now, let's look at the Transformer. If you strip away the fluff, a single layer of a Transformer is defined by
+        its <strong>Residual Connection</strong>. The state \(x\) — your "thought" or hidden representation — enters a
+        layer, goes through a transformation, and the result is added back to the original state.</p>
+      <p>The equation for a Transformer layer \(k\), the same one under the hood of <strong>GPT-5</strong>, is:</p>
+      <div class="math-block">
+        <div class="math-label">Transformer Layer Update</div>
+        $$x_{k+1} = x_k + f_k(x_k)$$
       </div>
+      <p><strong>This is exactly Forward Euler with a fixed step size of \(h = 1\).</strong> But to see why this is a
+        curse, we have to rip the lid off that Attention engine \(\text{Attn}(x_k)\) and see how it calculates that
+        nudge.</p>
 
-      <p>At Layer 1, attention scores for planet-related tokens are 52% vs 48%, a tiny bias. That bias gets added to the
-        residual stream at full force. At Layer 2, the hidden state is already planet-biased, so Query vectors naturally
-        score planet-related Keys even higher. This is a <strong>positive feedback loop with no damping</strong>.</p>
-      <p>By Layer 80, the "planet" semantic direction has been amplified so many times it becomes an unstoppable signal.
-        If you were asking about the element, the model overshot reality long before it generates your answer.</p>
-      <p><strong>Hallucination is not random. It is iterative amplification with no friction.</strong> More precisely:
-        if any eigenvalue \( \lambda \) of the Jacobian of \( f_k \) satisfies \( |1 + \lambda| > 1 \), that direction
-        amplifies at every layer. LLMs are trained for prediction accuracy, not spectral stability, so these amplifying
-        eigenvalues are everywhere.</p>
+      <h3>Engine 1: The Matchmaker (Attention)</h3>
+      <p>Inside the attention block, the model isn't doing "logic." It's doing <strong>Importance Matching</strong>.
+        Every word in the hidden state is projected into three different spaces:</p>
+      <div class="callout">
+        <div class="callout-icon">The Q, K, V Decomposition</div>
+        <p><strong>Queries (Q):</strong> "What am I looking for?" For example, I'm the word <em>Mercury</em>, looking
+          for <em>Space</em> or <em>Chemistry</em> context.</p>
+        <p><strong>Keys (K):</strong> "What do I contain?" For example, I'm the word <em>Orbit</em>, and I carry
+          <em>Space</em> information.</p>
+        <p><strong>Values (V):</strong> "What is my actual semantic content?" The raw data about orbits that gets
+          transferred.</p>
+      </div>
+      <p>To figure out how much the state should change, the model calculates a <strong>Similarity Score</strong> — it
+        slams Queries against Keys using a dot product:</p>
+      <div class="math-block">
+        <div class="math-label">Raw Similarity Score</div>
+        $$\text{Score} = Q \cdot K^T$$
+      </div>
+      <p>If a Query ("Space") matches a Key ("Orbit"), the score is huge. This tells the model these words are
+        semantically linked. But it needs to <em>commit</em>, so it turns those scores into <strong>Attention
+          Weights</strong> using a Softmax:</p>
+      <div class="math-block">
+        <div class="math-label">Softmax Attention Weights — d_k = dimension of vector K</div>
+        $$\alpha = \text{softmax}\!\left(\frac{Q K^T}{\sqrt{d_k}}\right)$$
+      </div>
+      <p>Mathematically, the full Attention engine output for a sequence is:</p>
+      <div class="math-block">
+        <div class="math-label">Full Attention Output</div>
+        $$\text{Attn}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
+      </div>
+      <p>This is pure <strong>word importance matching</strong>. If "Orbit" gets a 0.9 weight, the model decides it is
+        the most important context. It then multiplies that weight by the Value \(V\) to produce the final nudge.</p>
+
+      <h3>Engine 2: The Accelerator (FFNN)</h3>
+      <p>Once Attention has gathered the context, the <strong>Feed-Forward Neural Network (FFNN)</strong> takes over. If
+        Attention is the "Steering," the FFNN is the "Accelerator."</p>
+      <p>Mathematically, the FFNN is a point-wise non-linear transformation:</p>
+      <div class="math-block">
+        <div class="math-label">Feed-Forward Network</div>
+        $$\text{FFN}(x) = \sigma(W_1 x + b_1)\,W_2 + b_2$$
+      </div>
+      <p>Think of the FFNN as a <strong>Specialist</strong>. It takes the fuzzy "importance" weights from the Attention
+        engine and sharpens them. It maps the signal into a massive, higher-dimensional space (often 4× the model's
+        hidden dimension) where it can "categorize" the thought.</p>
+      <p>If the Attention engine says "I'm 51% sure this is about a planet," the FFNN acts as an
+        <strong>Amplifier</strong>. It applies a squashing function \(\sigma\) that pushes the signal toward a concrete
+        semantic pole. It takes that 51% and says, <em>"Right, then it's definitely a planet. Let's push the state even
+          harder in that direction."</em></p>
+
+      <h3>The Opened-Up Update Equation</h3>
+      <p>If we combine everything, the full mathematical "step" of a single layer \(k\) in a model like GPT-5 looks like
+        this. First, the residual + attention sub-layer:</p>
+      <div class="math-block">
+        <div class="math-label">Step 1 · Attention Sub-Layer</div>
+        $$x'_k = x_k + \text{MultiHead}(\text{LN}(x_k))$$
+      </div>
+      <p>Where the MultiHead attention is fully expanded as:</p>
+      <div class="math-block">
+        <div class="math-label">MultiHead Attention · Fully Expanded</div>
+        $$\text{MultiHead}(x) = W_O \left[\text{head}_1 \;\Big\|\; \text{head}_2 \;\Big\|\; \cdots \;\Big\|\;
+        \text{head}_h \right]$$
+        $$\text{head}_i = \text{softmax}\!\left(\frac{(xW_{Q_i})(xW_{K_i})^T}{\sqrt{d_k}}\right)(xW_{V_i})$$
+      </div>
+      <p>Then the FFN sub-layer adds on top of that:</p>
+      <div class="math-block">
+        <div class="math-label">Step 2 · FFN Sub-Layer</div>
+        $$x_{k+1} = x'_k + \text{FFN}(\text{LN}(x'_k))$$
+        $$\text{FFN}(x) = \sigma(xW_1 + b_1)\,W_2 + b_2$$
+      </div>
+      <p>Putting it all together, the <strong>complete opened-up single-layer update</strong> of a Transformer, the
+        actual equation running inside GPT-5, is:</p>
+      <div class="math-block">
+        <div class="math-label">The Full Opened-Up Transformer Update · One Layer of GPT-5</div>
+        $$\boxed{x_{k+1} = x_k +
+        W_O\!\left[\text{softmax}\!\left(\frac{(x_k^{\text{LN}}W_{Q_i})(x_k^{\text{LN}}W_{K_i})^T}{\sqrt{d_k}}\right)x_k^{\text{LN}}W_{V_i}\right]_i
+        + \sigma\!\left(x_k^{\prime\,\text{LN}}W_1 + b_1\right)W_2 + b_2}$$
+        <p style="margin-top:12px;font-size:.85rem;color:var(--muted);">where \(x_k^{\text{LN}} =
+          \text{LayerNorm}(x_k)\) and \(x_k^{\prime\,\text{LN}} = \text{LayerNorm}(x_k +
+          \text{MultiHead}(x_k^{\text{LN}}))\)</p>
+      </div>
+      <p>Comparing this to the Euler formula \(x_{k+1} = x_k + h \cdot f(x_k)\), the model is forced into a
+        <strong>fixed step size \(h = 1\)</strong>. Every matrix multiply, every softmax, every nonlinearity — the
+        entire result gets injected into the memory stream at full force:</p>
+      <div class="math-block">
+        <div class="math-label">The Euler Identity · h is Permanently Fixed at 1</div>
+        $$x_{k+1} = x_k + \underbrace{1}_{h=1} \cdot \underbrace{f_k(x_k)}_{\text{all of the above}}$$
+      </div>
+      <div class="aside">
+        <span class="aside-icon">😅</span>
+        <p>Sorry for the maths. This single equation is the reason for almost every LLM failure mode you've ever
+          witnessed. Worth the pain.</p>
+      </div>
     </section>
 
     <div class="divider">
@@ -1171,24 +1211,135 @@
       <div class="divider-line"></div>
     </div>
 
+    <!-- § BIAS BY DESIGN -->
+    <section class="section reveal">
+      <div class="section-tag">The Core Problem</div>
+      <h2>The Problem: Bias by Design</h2>
+      <p>Notice something? This math is just a "dating app" for vectors. <strong>Nothing in this equation stops the
+          system from taking a bias.</strong></p>
+      <ul>
+        <li>The \(Q \cdot K^T\) score only cares about what the model <em>thinks</em> is relevant based on training
+          data.</li>
+        <li>If the training data slightly favors "Planet" over "Element," the score for "Planet" will always be higher.
+        </li>
+        <li><strong>Crucially, there is no "Fact Check" or "Stabilizer" step.</strong> The attention mechanism just
+          says, "This looks important!" and hands that vector directly to the Euler update rule.</li>
+      </ul>
+
+      <h3>The Two Engines: Working Together Toward Disaster</h3>
+      <p>In a Transformer, these two engines work together to produce that "nudge" \(f_k\):</p>
+      <ul>
+        <li><strong>The Attention Mechanism (The Steering):</strong> It gathers context using the \(Q,K,V\) math above.
+          It looks at all other tokens and decides the <em>direction</em> the thought should move.</li>
+        <li><strong>The FFNN (The Acceleration):</strong> Once Attention has gathered the context, the FFNN processes it
+          through a high-dimensional "intuition engine" that pushes the state further along a semantic path.</li>
+      </ul>
+      <p>Every single layer, the model takes that nudge and performs a full Euler step. <strong>There is no brake. There
+          is no damping.</strong> There is only the step.</p>
+    </section>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-mark">§ 6</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- § HALLUCINATION -->
+    <section class="section reveal">
+      <div class="section-tag">Why It Breaks</div>
+      <h2>Why This Leads to Hallucination</h2>
+      <p>If you linearize this update rule, the stability depends on the <strong>eigenvalues</strong> of the system. For
+        the state to stay "sane," the eigenvalues \(\lambda\) must satisfy:</p>
+      <div class="math-block">
+        <div class="math-label">Stability Condition · What Must Be True</div>
+        $$|1 + \lambda| < 1$$ </div>
+          <p>But LLMs aren't trained for stability. They are trained for <em>accuracy</em>. If even one direction in the
+            math has a \(\lambda > 0\), the state along that direction will amplify exponentially. Nobody is enforcing
+            the stability condition during training, so these unstable eigenvalues are everywhere.</p>
+
+          <h3>The "Mercury" Example</h3>
+          <p>Imagine the prompt: <em>"Explain why Mercury is important."</em></p>
+
+          <div class="layer-diagram">
+            <div class="layer-diagram-title">Planet Bias Amplification Across Transformer Layers</div>
+            <div class="layers-visual">
+              <div class="layer-row">
+                <div class="layer-num">L1–10</div>
+                <div class="layer-bar-wrap">
+                  <div class="layer-bar" style="width:52%"><span class="layer-bar-text">State neutral — tiny planet lean
+                      from training</span></div>
+                </div>
+                <div class="layer-bias">+2% planet</div>
+              </div>
+              <div class="layer-row">
+                <div class="layer-num">L20</div>
+                <div class="layer-bar-wrap">
+                  <div class="layer-bar" style="width:64%"><span class="layer-bar-text">Euler adds nudge — Query is now
+                      planet-biased</span></div>
+                </div>
+                <div class="layer-bias">+18% planet</div>
+              </div>
+              <div class="layer-row">
+                <div class="layer-num">L40</div>
+                <div class="layer-bar-wrap">
+                  <div class="layer-bar" style="width:80%"><span class="layer-bar-text">Q·Kᵀ for planet-words grows —
+                      self-reinforcing</span></div>
+                </div>
+                <div class="layer-bias">+45% planet</div>
+              </div>
+              <div class="layer-row">
+                <div class="layer-num">L80</div>
+                <div class="layer-bar-wrap">
+                  <div class="layer-bar" style="width:98%"><span class="layer-bar-text">Amplified 80× — dominant,
+                      unstoppable signal</span></div>
+                </div>
+                <div class="layer-bias" style="color:var(--red)">+90% planet</div>
+              </div>
+            </div>
+          </div>
+
+          <ul>
+            <li><strong>Layer 1–10:</strong> The state is neutral. But the attention mechanism finds a tiny bit more
+              "space" context than "chemistry" context.</li>
+            <li><strong>Layer 20:</strong> Because the Euler update is \(x_{k+1} = x_k + f_k\), that tiny "Planet" nudge
+              is <strong>added</strong> to the state. The Query for the next layer is now slightly more "Planet-biased."
+            </li>
+            <li><strong>Layer 40:</strong> The "Planet" direction isn't just maintained, it's reinforced. The Similarity
+              Score \(Q \cdot K^T\) for planet-related words grows even larger.</li>
+            <li><strong>Layer 80:</strong> The "Planet" signal has been amplified 80 times. It is now a dominant,
+              unstoppable force.</li>
+          </ul>
+
+          <p>By the time the model reaches the final layer, it isn't just "considering" that Mercury is a planet. It is
+            <strong>convinced</strong>. If you were asking about the element, the model has overshot reality.
+            <strong>Hallucination is iterative amplification.</strong></p>
+    </section>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-mark">§ 7</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- § THE CURSE -->
     <section class="section reveal">
       <div class="section-tag">The Verdict</div>
-      <h2>The Structural Flaws of a Fixed-Step World</h2>
-      <p>Forward Euler is the junk food of numerical integration. Fast, cheap, parallelizable, which is why it's used.
-        But the cost is structural:</p>
+      <h2>The Essence of the Curse</h2>
+      <p>The Forward Euler method is the "junk food" of numerical integration. It's fast, cheap, and easy to
+        parallelize, which is why we can run GPT-5. But the cost is structural:</p>
       <div class="callout">
         <div class="callout-icon">Three Structural Flaws</div>
-        <p><strong>Conditional Stability:</strong> High-magnitude transformations push eigenvalues outside the stability
-          region. The model explodes in certain semantic directions.<br><br>
-          <strong>Overshooting:</strong> \( h = 1 \) is maximum-force commitment at every layer. The model commits to an
-          interpretation far earlier than it should, because it has no choice.<br><br>
-          <strong>No Friction:</strong> Real stable systems have a damping term that pulls state back toward
-          equilibrium. Transformers have no such term. They just pile nudge on top of nudge.
-        </p>
+        <p><strong>It is conditionally stable:</strong> Sharp logic makes the state explode. If the eigenvalues of
+          \(f_k\) push \(|1+\lambda|\) above 1 in any direction, that direction amplifies without bound.</p>
+        <p><strong>It overshoots:</strong> The model commits to an interpretation far earlier than it should because \(h
+          = 1\) is a massive jump. There is no cautious, small step. Only the full plunge every time.</p>
+        <p><strong>It lacks "friction":</strong> Real physical systems have a \((1 - \gamma)\) damping term to pull
+          errors back toward equilibrium. Transformers have no such term. They just pile nudge on top of nudge, layer
+          after layer.</p>
       </div>
-      <div class="pull-quote">"We gave AI a Ferrari engine, fixed the steering to move in 1-meter discrete jumps, and
-        removed the brakes. Everything begins here, with the fact that the most advanced AI on Earth never learned how
-        to slow down."</div>
+      <div class="pull-quote">"We have built the most sophisticated thinking machines in history on top of the crudest
+        numerical solver known to man. We've given the AI a Ferrari engine but fixed the steering wheel so it can only
+        move in discrete, 1-meter jumps. And we've removed the brakes. Everything begins here."</div>
 
       <!-- SHARE -->
       <div class="share-bar">
@@ -1218,8 +1369,7 @@
       </div>
     </section>
 
-    <!-- CHAPTER NAVIGATION -->
-    <nav class="chapter-nav" aria-label="Chapter navigation">
+    <nav class="chapter-nav">
       <span class="cnav-cell prev disabled">
         <div class="cnav-dir">Previous</div>
         <div class="cnav-title">Start of Series</div>
@@ -1232,24 +1382,34 @@
 
   </main>
 
-  <!-- TEASER -->
   <footer class="conclusion">
     <div class="conclusion-inner">
-      <div class="section-tag" style="opacity:1;transform:none;">Looking Ahead</div>
-      <h2>The Curse of Euler Is Only the Beginning</h2>
-      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">Bad integration method is chapter one of the problem.
-        But even with a perfect integrator, the Transformer as a dynamical system violates the most basic mathematical
-        conditions required for stable memory. It is not merely poorly integrated; it is <strong>structurally
-          unconstrained</strong>.</p>
-      <p style="color:rgba(220,228,238,.65);">In Chapter 2, we put the Transformer under the microscope of rigorous
-        dynamical systems theory: contraction mappings, Lyapunov stability, spectral constraints, and show why it fails
-        every single one.</p>
+      <div class="section-tag" style="opacity:1;transform:none;">The Road Ahead</div>
+      <h2>From Chaos to Constraint</h2>
+      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">The Curse of Euler is only the beginning. We've built a
+        massive, multi-billion dollar skyscraper on a foundation of "good enough" calculus, and we're acting surprised
+        when the windows start to rattle. But the <strong style="color:var(--text)">problem goes deeper than just a bad
+          integration rule — it's a fundamental violation of the laws of the universe.</strong></p>
+      <p style="color:rgba(220,228,238,.65);margin-bottom:16px;">In the next chapter, we're stripping away the AI hype
+        and putting GPT under the microscope of rigorous dynamical systems theory. We'll look at why these models are
+        effectively "perpetual motion machines" that lack a mathematical "sobriety check" — the kind that ensures a
+        system doesn't just wander off into the void. We'll explore the "missing friction" that should keep a system
+        grounded, and <strong style="color:var(--text)">why LLMs seem to have an infinite energy budget that would make
+          a thermodynamics professor weep.</strong></p>
+      <p style="color:rgba(220,228,238,.65);margin-bottom:36px;">Finally, we'll look at a new horizon where the math is
+        done right from the start. We're moving from the lawless Wild West of haphazard jumps toward a world where AI
+        finally respects the deep, hidden symmetry of energy and stability.</p>
       <a class="next-chapter" href="chapter2.html">
         <div class="next-label">Continue Reading → Chapter 02</div>
         <div class="next-title">The Unconstrained Machine</div>
-        <p class="next-desc">Five conditions. Zero satisfied. Why Transformer memory is mathematically broken at the
-          structural level.</p>
+        <p class="next-desc">Five conditions for stable memory. Zero satisfied by the Transformer. Contraction mappings,
+          Lyapunov stability, spectral constraints and why S4 gets it right from the start.</p>
       </a>
+      <div class="aside" style="margin-top:40px;">
+        <span class="aside-icon">👋</span>
+        <p>Follow and subscribe to get notified when the next chapter drops. This series goes deep. We're just getting
+          started.</p>
+      </div>
     </div>
   </footer>
 
@@ -1260,43 +1420,18 @@
   </footer>
 
   <script>
-    // PROGRESS + NAV
-    const _bar = document.getElementById('progress-bar');
-    const _nav = document.getElementById('navbar');
-    if (_bar && _nav) {
-      window.addEventListener('scroll', () => {
-        const t = document.body.scrollHeight - window.innerHeight;
-        _bar.style.width = (window.scrollY / t * 100) + '%';
-        _nav.classList.toggle('show', window.scrollY > 180);
-      });
-    }
-
-    // SCROLL REVEAL
-    const _obs = new IntersectionObserver(es => {
-      es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.07 });
+    const _bar = document.getElementById('progress-bar'), _nav = document.getElementById('navbar');
+    if (_bar && _nav) { window.addEventListener('scroll', () => { const t = document.body.scrollHeight - window.innerHeight; _bar.style.width = (window.scrollY / t * 100) + '%'; _nav.classList.toggle('show', window.scrollY > 180); }); }
+    const _obs = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.07 });
     document.querySelectorAll('.reveal').forEach(el => _obs.observe(el));
-
-    // SHARE
-    function initShare(title) {
-      const url = window.location.href;
-      const enc = encodeURIComponent(url);
-      const txt = encodeURIComponent(title + ' — The Broken Math of Modern AI');
-      const tw = document.getElementById('share-twitter');
-      const li = document.getElementById('share-linkedin');
-      const cp = document.getElementById('share-copy');
-      const msg = document.getElementById('copy-msg');
+    (function initShare() {
+      const url = window.location.href, enc = encodeURIComponent(url), txt = encodeURIComponent('Ch.01 — The Curse of Euler Integration — The Broken Math of Modern AI');
+      const tw = document.getElementById('share-twitter'), li = document.getElementById('share-linkedin'), cp = document.getElementById('share-copy'), msg = document.getElementById('copy-msg');
       if (tw) tw.href = `https://twitter.com/intent/tweet?text=${txt}&url=${enc}`;
       if (li) li.href = `https://www.linkedin.com/sharing/share-offsite/?url=${enc}`;
-      if (cp) cp.addEventListener('click', () => {
-        navigator.clipboard.writeText(url).then(() => {
-          if (msg) { msg.style.opacity = 1; setTimeout(() => msg.style.opacity = 0, 2200); }
-        });
-      });
-    }
-
+      if (cp) cp.addEventListener('click', () => { navigator.clipboard.writeText(url).then(() => { if (msg) { msg.style.opacity = 1; setTimeout(() => msg.style.opacity = 0, 2200); } }); });
+    })();
   </script>
-  <script>initShare('Ch.01: The Curse of Euler Integration');</script>
 </body>
 
 </html>
